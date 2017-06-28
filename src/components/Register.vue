@@ -10,7 +10,7 @@
           <span class="ctr-code">+86</span><input type="text" name="account" placeholder="请输入手机号码/邮箱" v-model="account" :value="account">
         </li>
         <li>
-          图片码：<input type="select" name="imgcode" placeholder="请输入图片码" v-model="imgCode" :value="imgCode">
+          图片码：<input type="select" name="imgCode" placeholder="请输入图片码" v-model="imgCode" :value="imgCode">
           <img src="" alt="图片码" class="img-code" :title="correctImgCode">
         </li>
         <li>
@@ -85,69 +85,69 @@
     background: #f5f5f5;
     line-height: 5rem;
     padding: 0 1.5rem;
-  input{
-    font-size: 1.4rem;
-    padding: 0 1rem;
-    outline: none;
-    border: none;
-    width: 80%;
-  }
-  h2 {
-    text-align: center;
-    border-bottom: 1px solid #efefef;
-    margin-bottom: 2rem;
-  }
-  ul.register-info {
-    background: #fff;
-    padding: 0 2em;
-    overflow: hidden;
-  li {
-    border-bottom: 1px solid #efefef;
-    height: 5rem;
-    white-space: nowrap;
-  .ctr-code {
-    border-right: 1px solid #efefef;
-    display: inline-block;
-    padding: 0 1rem;
-  }
-  input[name=imgCode],input[name=msgCode]{
-    width: 50%;
-  }
-  .img-code, .msg-code {
-    vertical-align: middle;
-    width: 8rem;
-    height: 3.5rem;
-    display: inline-block;
-    background: rgb(210, 210, 210);
-    border: none;
-    border-radius: 3px;
-    overflow: hidden;
-    line-height: 3.5rem;
-    padding: 0 .5rem;
-  }
-  }
-  }
-  button {
-    height: 5rem;
-    text-align: center;
-    width: 100%;
-    background: rgb(225, 225, 225);
-    color:#fff;
-    font-size: 1.8rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 3px;
+    input{
+      font-size: 1.4rem;
+      padding: 0 1rem;
+      outline: none;
+      border: none;
+      width: 80%;
+    }
+    h2 {
+      text-align: center;
+      border-bottom: 1px solid #efefef;
+      margin-bottom: 2rem;
+    }
+    ul.register-info {
+      background: #fff;
+      padding: 0 2em;
+      overflow: hidden;
+    li {
+      border-bottom: 1px solid #efefef;
+      height: 5rem;
+      white-space: nowrap;
+    .ctr-code {
+      border-right: 1px solid #efefef;
+      display: inline-block;
+      padding: 0 1rem;
+    }
+    input[name=imgCode],input[name=msgCode]{
+      width: 50%;
+    }
+    .img-code, .msg-code {
+      vertical-align: middle;
+      width: 8rem;
+      height: 3.5rem;
+      display: inline-block;
+      background: rgb(210, 210, 210);
+      border: none;
+      border-radius: 3px;
+      overflow: hidden;
+      line-height: 3.5rem;
+      padding: 0 .5rem;
+    }
+    }
+    }
+    button {
+      height: 5rem;
+      text-align: center;
+      width: 100%;
+      background: rgb(225, 225, 225);
+      color:#fff;
+      font-size: 1.8rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 3px;
 
-  }
-  .recall-code {
-    text-align: center;
-  a{
-    display: inline;
-  }
-  }
-  .to-register {
-    text-align: center;
-  }
+    }
+    .recall-code {
+      text-align: center;
+    a{
+      display: inline;
+    }
+    }
+    .to-register {
+      text-align: center;
+    }
 
   }
 </style>

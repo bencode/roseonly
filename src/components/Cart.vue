@@ -6,16 +6,17 @@
         <li v-for="item in items">
           <input type="radio">
           <router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">
-            <img :src="item.cimg" alt="">
+            <img :src="`/static/img/product/${item.current_col_img}`" alt="">
           </router-link>
           <div class="desc">
-            mmmmmmmm
+            {{item.name + item.series + item.sub_series + item.qty + item.size}}
             <div class="qty">
-              <span @click="reduce"> - </span>
-              <span class="count">{{item.count}}</span>
-              <span @click="add"> + </span>
+              <span @click="reduce(item.count)"> - </span>
+              <span class="count">{{count = item.count}}</span>
+              <span @click="add(item.count)"> + </span>
             </div>
           </div>
+          <span class="price">￥ {{item.price}}</span>
 
         </li>
       </ul>
@@ -25,7 +26,6 @@
 
 <script>
   import bus from './bus.js';
-  var itemsList;
   bus.$on('selectedItem',function(items) {
     console.log(items);
     return itemsList = items;
@@ -35,35 +35,31 @@
     name: 'mycart',
     data () {
       return {
-//        items: [{pid:1,cid:1,cimg:"/static/img/product/p5_zs.png"},{pid:2,cid:1,cimg:"/static/img/product/p5_cx.png"}],
-        items: itemsList,
-        //count: 0,
+        items: [],
+        count: '',
       }
     },
     created: function () {
-//      console.log(this.items);
-//      bus.$on('selectedItem',function(items){
-//          console.log(this.items);
-//        this.items = items;
-//        console.log(items);
-//
-//        console.log(this.items);
-//      }.bind(this));
+      var url = 'http://localhost:8060/cart';
+      this.$http.get(url,{emulateJSON: true}).then(res => {
+        console.log(res.body)
+        this.items = res.body;
+      },res => {})
 
-
-//      var url = 'http://localhost:8060/cart';
-//      var data = {pid: this.items.pid, cid: this.items.cid};
-      //this.$http.post(url,data,{emulateJSON: true}).then(res => {},res => {})
     },
     methods: {
-      reduce () {
+      reduce (count) {
         this.count--;
         if(this.count <= 0 ) {
-            this.count = 0;
+          this.count = 0;
         }
+
+        console.log(this.count);
       },
-      add () {
+      add (count) {
         this.count++;
+
+        console.log(this.count);
       }
     },
 
@@ -88,6 +84,7 @@
       background: #fff;
       padding: 1rem;
       margin-bottom: 1.5%;
+      align-items: center;
       .img-link{
         width: 30%;
       }
@@ -101,6 +98,7 @@
       }
       .qty{
         font-size: 0;
+        margin-top: 2rem;
         span{
           display: inline-block;
           border: 1px solid #aaa;
@@ -114,6 +112,10 @@
           border-left: none;
         }
 
+      }
+      .price {
+        font-weight: bold;
+        font-size: 1.6rem;
       }
     }
   }

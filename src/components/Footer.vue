@@ -35,7 +35,7 @@ export default {
       let count = 1;
       //console.log(this.colors);
       var cimg = this.colors.filter( (v) => v.isCurrent === true)[0].co_img;
-      this.selected.push({pid:this.$route.params.pid, cid: this.$route.params.cid, cimg: cimg, count: 1});
+      //this.selected.push({pid:this.$route.params.pid, cid: this.$route.params.cid, cimg: cimg, count: 1});
       console.log(this.selected);
       this.showModal = true;
       this.styleObj.height = window.screen.height +'px';
@@ -43,8 +43,15 @@ export default {
       rocketcss('.color-img li.current','.cart', 'rocketPulseHole',1000);
       $('.cart').addClass('targetPulse');
       bus.$emit('addCount', count)//点击一次向购物车增加1
-      bus.$emit('selectedItem',this.selected);//发送选中的产品，颜色，数量到购物车组件
+      //bus.$emit('selectedItem',this.selected);//发送选中的产品，颜色，数量到购物车组件
 //      console.log(this.colors);
+
+      //点击'加入购物车'，使用Ajax向服务端发送当前产品数据
+      var url = 'http://localhost:8060/add_to_cart'
+      var pid = this.$route.params.pid;
+      var cid = this.$route.params.cid;
+      var data = {pid: pid, cid: cid, cimg: cimg, count: 1};
+      this.$http.post(url,data,{emulateJSON: true});
     },
     isShowing (bool) {
       this.showModal = bool;

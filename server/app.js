@@ -10,22 +10,22 @@ const parseUrl = require('url').parse;
 const user = require('./user');
 const cors = require('cors');
 const bodyParser = require("body-parser");
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
 //Here we are configuring express to use body-parser as middle-ware.
-
-
-
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(pathUtil.join(__dirname, '../static')));
-
+app.use(cookieParser());
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {maxAge: 60 * 1000 * 60 * 24} //cookie保存24小时
+}))
 http.createServer(app).listen(8060);
-
-//定义路由
-// app.get('/index', (req, res)=>{
-//   res.sendFile(__dirname+'../index.html');//直接发送html静态页面文件
-// })
-
 
 //前后端端口不一样，跨域获取文件，对后端响应头作设置
 const setCors = function(req,res){
@@ -63,7 +63,6 @@ app.get('/detail/pid/:pid/cid/:cid', (req, res)=>{
     // var select1 = `SELECT * FROM ro_color WHERE pid=? And cid=? `;
     // var select2 = `SELECT * FROM rec_item`;
     // var data = [];
-
     // conn.query(select1,[pid,cid],(err, result)=>{
     //   setCors(req,res);
     //   var cItem = result;
@@ -107,21 +106,80 @@ var issue2options = {
 app.post('/login',cors(),user.login);
 app.post('/register',cors(),user.register)
 
-
-app.post('/cart',cors(),(req,res) => {
-  "use strict";
+app.post('/add_to_cart',cors(),(req,res) => {
+  var items = req.session.items;
+  if (!items) {
+    items = [];
+    req.session.items = items;
+  }
   var pid = req.body.pid;
   var cid = req.body.cid;
-  pool.connection((err,conn) => {
-    conn.query('SELECT current_col_img FROM ro_color WHERE pid=? AND cid=?',[pid,cid],(err,result) => {
-      console.log('ro_color'+result);
-      conn.query('SELECT * FROM ro_item WHERE pid=?',[pid],(err,result) => {
-        console.log('ro_item'+result)
+  var count = req.body.count;
+  items.push({pid:pid, cid: cid, count:count});
+  res.json({success: true});
+})
+
+// app.post('/change_count',cors(),(req,res) => {
+//     var p_id = req.body.pid;
+//     var c_id = req.body.cid;
+//     var count = req.body.count;
+//     items.forEach(function(v){
+//         if(v.pid == p_id && v.cid == c_id){
+//             v.count = count;
+//         }
+//     })
+// })
+
+app.get('/cart',cors(),(req,res) => {
+  var items = req.session.items;
+  console.log(items);
+  if(items){
+      pool.getConnection((err, conn) => {
+          var output = [];
+          for(var i = 0; i < items.length;i++) {
+              conn.query('SELECT current_col_img FROM ro_color WHERE pid=? AND cid=?', [items[i].pid, items[i].cid], (err, result) => {
+                  if (result.length > 0) {
+                      var simg = result[0].current_col_img;
+                      conn.query('SELECT * FROM ro_item WHERE pid=?', [items[i].pid], (err, result) => {
+                          //console.log(result)
+                          result[0].simg = simg;
+                           output.push = result[0];
+
+                          // if (items.length === 0) {
+                          //     items.push(result[0]);
+                          // } else {
+                          //     //判断保存的产品中是否有相同的，如果有直接增加数量，否则添加新产品对象
+                          //     console.log(sel_Item);
+                          //     if (items.some((v) => {
+                          //             return (v.pid == p_id && v.cid == c_id)
+                          //         })) {
+                          //         items.forEach((v) => {
+                          //             if (v.pid == p_id && v.cid == c_id) {
+                          //                 v.count = Number(v.count) + Number(count);
+                          //                 return;
+                          //             }
+                          //         })
+                          //     } else {
+                          //         items.push(result[0]);
+                          //     }
+                          // }
+
+                      })
+                  }
+              })
+
+          }
+          console.log(output)
+          res.json(output);
+          conn.release();
+
       })
-    })
-  })
+  }
 
 })
+
+
+
 
 
 
