@@ -22,6 +22,8 @@ Vue.use(VueLazyload, {
 Vue.use(VueResource);
 Vue.use(VueSwiper);
 
+Vue.http.options.credentials = true;//让Ajax请求在跨域下发送cookie，默认不发送cookie
+
 new Vue({
   el: '#app',
   router,

@@ -23,7 +23,7 @@ app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    cookie: {maxAge: 60 * 1000 * 60 * 24} //cookie保存24小时
+    cookie: { maxAge: 60 * 1000 * 60 * 24 } //cookie保存24小时
 }))
 http.createServer(app).listen(8060);
 
@@ -99,24 +99,26 @@ async function execQuery(conn, sql, args = []) {// args = []表示参数为数�
 
 var issue2options = {
   origin: true,
-  methods: ['POST'],
+  methods: ['GET','POST'],
   credentials: true,
   maxAge: 3600
 };
-app.post('/login',cors(),user.login);
+app.post('/login',cors(issue2options),user.login);
 app.post('/register',cors(),user.register)
 
-app.post('/add_to_cart',cors(),(req,res) => {
-  var items = req.session.items;
-  if (!items) {
-    items = [];
-    req.session.items = items;
+app.post('/add_to_cart',cors(issue2options),(req,res) => {
+  const items = req.session.items || [];
+  const pid = req.body.pid;
+  const cid = req.body.cid;
+  const count = Number(req.body.count) || 1;
+  const item = items.find(item => item.pid === pid && item.cid === cid);
+  if (item) {
+    item.count = item.count + count;
+  } else {
+    items.push({ pid, cid, count });
   }
-  var pid = req.body.pid;
-  var cid = req.body.cid;
-  var count = req.body.count;
-  items.push({pid:pid, cid: cid, count:count});
-  res.json({success: true});
+  req.session.items = items;
+  res.json({ success: true });
 })
 
 // app.post('/change_count',cors(),(req,res) => {
@@ -130,53 +132,52 @@ app.post('/add_to_cart',cors(),(req,res) => {
 //     })
 // })
 
-app.get('/cart',cors(),(req,res) => {
-  var items = req.session.items;
-  console.log(items);
-  if(items){
-      pool.getConnection((err, conn) => {
-          var output = [];
-          for(var i = 0; i < items.length;i++) {
-              conn.query('SELECT current_col_img FROM ro_color WHERE pid=? AND cid=?', [items[i].pid, items[i].cid], (err, result) => {
-                  if (result.length > 0) {
-                      var simg = result[0].current_col_img;
-                      conn.query('SELECT * FROM ro_item WHERE pid=?', [items[i].pid], (err, result) => {
-                          //console.log(result)
-                          result[0].simg = simg;
-                           output.push = result[0];
-
-                          // if (items.length === 0) {
-                          //     items.push(result[0]);
-                          // } else {
-                          //     //判断保存的产品中是否有相同的，如果有直接增加数量，否则添加新产品对象
-                          //     console.log(sel_Item);
-                          //     if (items.some((v) => {
-                          //             return (v.pid == p_id && v.cid == c_id)
-                          //         })) {
-                          //         items.forEach((v) => {
-                          //             if (v.pid == p_id && v.cid == c_id) {
-                          //                 v.count = Number(v.count) + Number(count);
-                          //                 return;
-                          //             }
-                          //         })
-                          //     } else {
-                          //         items.push(result[0]);
-                          //     }
-                          // }
-
-                      })
-                  }
-              })
-
-          }
-          console.log(output)
-          res.json(output);
-          conn.release();
-
-      })
+app.get('/cart',cors(issue2options), async (req,res) => {
+  const items = req.session.items || [];
+  const conn = await getConn();
+  let itemsList = [];
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const color = await getColorImg(conn, item.pid, item.cid);
+    const simg = color[0].current_col_img;
+    const product = await getProduct(conn,item.pid);
+    product[0].simg = simg;
+    product[0].count = item.count;
+    itemsList.push(product[0]);
   }
+  conn.release();
+  res.json(itemsList);
 
 })
+
+
+async function getColorImg(conn, pid, cid) {
+    return await execQuery(conn, 'SELECT current_col_img FROM ro_color WHERE pid=? AND cid=?', [pid, cid]);
+
+}
+async function getProduct(conn, pid) {
+    return await execQuery(conn, 'SELECT * FROM ro_item WHERE pid=?', [pid]);
+
+}
+
+
+function getConn() {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((e, conn) => {
+            e ? reject(e) : resolve(conn);
+        });
+    });
+}
+
+function execQuery(conn, sql, params = []) {
+    return new Promise((resolve, reject) => {
+        conn.query(sql, params, (e, result) => {
+            e ? reject(e) : resolve(result);
+        });
+    });
+}
+
+
 
 
 

@@ -6,13 +6,13 @@
         <li v-for="item in items">
           <input type="radio">
           <router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">
-            <img :src="`/static/img/product/${item.current_col_img}`" alt="">
+            <img :src="`/static/img/product/${item.simg}`" alt="">
           </router-link>
           <div class="desc">
             {{item.name + item.series + item.sub_series + item.qty + item.size}}
             <div class="qty">
               <span @click="reduce(item.count)"> - </span>
-              <span class="count">{{count = item.count}}</span>
+              <span class="count">{{item.count}}</span>
               <span @click="add(item.count)"> + </span>
             </div>
           </div>
@@ -95,6 +95,7 @@
       }
       .desc{
         width: 30%;
+        margin-right: 2rem;
       }
       .qty{
         font-size: 0;
