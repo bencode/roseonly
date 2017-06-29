@@ -9,7 +9,8 @@
             <img :src="`/static/img/product/${item.simg}`" alt="">
           </router-link>
           <div class="desc">
-            {{item.name + item.series + item.sub_series + item.qty + item.size}}
+            <b>{{item.name}}</b>
+            <br> {{item.series}}  {{item.qty + item.size}}
             <div class="qty">
               <span @click="reduce(item.count,index)"> - </span>
               <span class="count">{{item.count}}</span>
@@ -33,13 +34,13 @@
     console.log(items);
     return itemsList = items;
   });
-  function postData(data) {
+  function postData(count,i) {
     const url = 'http://localhost:8060/cart/count';
-    console.log(data);
-    this.$http.post(url,data,{emulateJSON: false}).then(res => {
+    this.items[i].count = count;
+    const cartItems = JSON.stringify(this.items);
+    const data ={cartItems};
+    this.$http.post(url,data,{emulateJSON: true}).then(res => {
       this.items = res.body;
-      console.log('.......');
-      console.log(this.items)
     })
   }
 
@@ -74,18 +75,13 @@
         if(count <= 0 ) {
          count = 0;
         }
-        this.items[i].count = count;
-        const data = this.items ;
-        postData.call(this,data);
+        postData.call(this,count,i);
       },
       add (count,i) {
         count++;
-        this.items[i].count = count;
-        const data = this.items ;
-        postData.call(this,data);
+        postData.call(this,count,i);
       },
       getAll (v) {
-        console.log(v);
         if(v){
           this.selAll = true;
           this.items.forEach(function(v) {

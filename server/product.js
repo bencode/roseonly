@@ -90,8 +90,19 @@ module.exports ={
 
   },
   count: (req,res) => {
-    const items = req.body;
-    console.log(items);
+    const items = JSON.parse(req.body.cartItems);
+    const sessionItems = req.session.items;//读取session
+    console.log(items)
+    //判断如果前台发过来的pid，cid和session里的匹配，就把count设置为前台发来的
+    items.forEach((v) => {
+      sessionItems.forEach((d) => {
+        if(v.pid == d. pid && v.cid == d.cid) {
+          d.count = v.count
+        }
+      })
+    })
+    req.session.items = sessionItems;//保存session
+    console.log(sessionItems);
     //连接数据库，查看产品数量
     res.json(items);
   },

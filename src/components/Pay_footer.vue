@@ -38,9 +38,6 @@ export default {
             return p+v.count
         },0)
     },
-    selAll: function() {
-       return this.allItems === this.selItems;
-    }
   },
   watch: {
     'selItems': function() {//根据所选产品的变化，判断全选按钮是否被选中
