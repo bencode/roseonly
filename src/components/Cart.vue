@@ -21,7 +21,7 @@
       </ul>
     </div>
     <div>
-      <pay-footer @input="getAll" :selAll="selAll" :selItems="selItems" ></pay-footer>
+      <pay-footer @input="getAll" :allItems="items" :selItems="selItems" ></pay-footer>
     </div>
   </div>
 </template>
@@ -52,16 +52,11 @@
       }
     },
     computed: {
-      selAll: function () {
-        return this.items.some((v) => {
-         return v.selected === false
-       });
-      },
       selItems: function () {
         return this.items.filter((v) => {
           return v.selected === true
         })
-      }
+      },
     },
     components: {
       payFooter
@@ -93,9 +88,15 @@
         console.log(v);
         if(v){
           this.selAll = true;
+          this.items.forEach(function(v) {
+            v.selected = true;
+          })
            //请求服务器
         }else{
           this.selAll = false;
+          this.items.forEach(function(v) {
+            v.selected = false;
+          })
           //请求服务器
         }
       },

@@ -55,7 +55,7 @@ app.post('/register',cors(),user.register);
 app.post('/add_to_cart',cors(issue2options),product.addCart);
 app.get('/cart',cors(issue2options), product.cart);
 app.post('/cart/count',cors(issue2options),product.count);
-app.post('/cart/select',cors(issue2options),product.select);
+// app.post('/cart/select',cors(issue2options),product.select);
 
 
 
