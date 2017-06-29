@@ -1,14 +1,14 @@
 <template>
   <ul class="pay-footer">
     <li class="lt">
-      <input type="checkbox" name="" id="selectAll" v-model="selAll" @click="sendAll(selAll)">
-      <label for="selectAll" @click="sendData()">全选</label>
+      <input type="checkbox" name="" id="selectAll" v-model="selAll" @click="sendAll()">
+      <label for="selectAll">全选</label>
     </li>
     <li class="md">
       合计： ￥{{amount}}
     </li>
     <li class="rt">
-      <router-link to="/login" >去结算({{qty}})</router-link>
+      <router-link to="/login" :style="{background:bgcolor}">去结算({{qty}})</router-link>
     </li>
   </ul>
 </template>
@@ -22,7 +22,8 @@ export default {
   props: ['allItems','selItems'],
   data () {
     return {
-      selAll: true
+      selAll: true,
+      bgcolor: '#c71f2c',
     }
   },
 
@@ -42,11 +43,14 @@ export default {
   watch: {
     'selItems': function() {//根据所选产品的变化，判断全选按钮是否被选中
         this.selItems.length === this.allItems.length ? this.selAll = true : this.selAll = false;
+    },
+    'qty' : function() {
+      this.qty ? this.bgcolor = '#c71f2c' : this.bgcolor = '#ddd'
     }
  },
   methods: {
-    sendAll (selAll) {
-      this.selAll = selAll;
+    sendAll () {
+      this.selAll = !this.selAll;
       this.$emit('input',this.selAll);
     },
   },
@@ -71,7 +75,7 @@ export default {
       background-size: 2.5rem;
     }
     .rt {
-      background: #c71f2c;
+      /*background: #c71f2c;*/
       width: 40%;
       a{
         color:#fff;
