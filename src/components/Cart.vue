@@ -3,33 +3,45 @@
     <h2>购物车</h2>
     <div class="mylist">
       <ul>
-        <li v-for="item in items">
-          <input type="radio">
+        <li v-for="(item,index) in items" v-if="item.count!=0">
+          <input type="checkbox" v-model="item.selected">
           <router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">
             <img :src="`/static/img/product/${item.simg}`" alt="">
           </router-link>
           <div class="desc">
             {{item.name + item.series + item.sub_series + item.qty + item.size}}
             <div class="qty">
-              <span @click="reduce(item.count)"> - </span>
+              <span @click="reduce(item.count,index)"> - </span>
               <span class="count">{{item.count}}</span>
-              <span @click="add(item.count)"> + </span>
+              <span @click="add(item.count,index)"> + </span>
             </div>
           </div>
           <span class="price">￥ {{item.price}}</span>
-
         </li>
       </ul>
+    </div>
+    <div>
+      <pay-footer @input="getAll" :selAll="selAll" :selItems="selItems" ></pay-footer>
     </div>
   </div>
 </template>
 
 <script>
+  import payFooter from './Pay_footer.vue'
   import bus from './bus.js';
   bus.$on('selectedItem',function(items) {
     console.log(items);
     return itemsList = items;
-  })
+  });
+  function postData(data) {
+    const url = 'http://localhost:8060/cart/count';
+    console.log(data);
+    this.$http.post(url,data,{emulateJSON: false}).then(res => {
+      this.items = res.body;
+      console.log('.......');
+      console.log(this.items)
+    })
+  }
 
   export default {
     name: 'mycart',
@@ -39,30 +51,55 @@
         count: '',
       }
     },
-    created: function () {
-      var url = 'http://localhost:8060/cart';
-      this.$http.get(url,{emulateJSON: true}).then(res => {
-        console.log(res.body)
-        this.items = res.body;
-      },res => {})
-
-    },
-    methods: {
-      reduce (count) {
-        this.count--;
-        if(this.count <= 0 ) {
-          this.count = 0;
-        }
-
-        console.log(this.count);
+    computed: {
+      selAll: function () {
+        return this.items.some((v) => {
+         return v.selected === false
+       });
       },
-      add (count) {
-        this.count++;
-
-        console.log(this.count);
+      selItems: function () {
+        return this.items.filter((v) => {
+          return v.selected === true
+        })
       }
     },
-
+    components: {
+      payFooter
+    }
+    ,
+    created: function () {
+      const url = 'http://localhost:8060/cart';
+      this.$http.get(url,{emulateJSON: true}).then(res => {
+        this.items = res.body;
+      },res => {});
+    },
+    methods: {
+      reduce (count,i) {
+        count--;
+        if(count <= 0 ) {
+         count = 0;
+        }
+        this.items[i].count = count;
+        const data = this.items ;
+        postData.call(this,data);
+      },
+      add (count,i) {
+        count++;
+        this.items[i].count = count;
+        const data = this.items ;
+        postData.call(this,data);
+      },
+      getAll (v) {
+        console.log(v);
+        if(v){
+          this.selAll = true;
+           //请求服务器
+        }else{
+          this.selAll = false;
+          //请求服务器
+        }
+      },
+    }
   }
 </script>
 
