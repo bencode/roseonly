@@ -4,7 +4,10 @@
     <div class="mylist">
       <ul>
         <li v-for="(item,index) in items" v-if="item.count!=0">
-          <input type="checkbox" v-model="item.selected">
+          <div class="checkbox">
+            <input type="checkbox" v-model="item.selected" :id="`label${index}`">
+            <label :for="`label${index}`" :class="{bgposition: item.selected}"></label>
+          </div>
           <router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">
             <img :src="`/static/img/product/${item.simg}`" alt="">
           </router-link>
@@ -13,7 +16,7 @@
             <br> {{item.series}}  {{item.qty + item.size}}
             <div class="qty">
               <span @click="reduce(item.count,index)"> - </span>
-              <span class="count">{{item.count}}</span>
+              <input type="text" :value="item.count" class="count">
               <span @click="add(item.count,index)"> + </span>
             </div>
           </div>
@@ -21,7 +24,7 @@
         </li>
       </ul>
     </div>
-    <div>
+    <div class="footer">
       <pay-footer @input="getAll" :allItems="items" :selItems="selItems" ></pay-footer>
     </div>
   </div>
@@ -113,46 +116,64 @@
     background: #ddd;
     li {
       display: flex;
-      flex-wrap: wrap;
       border: 1px solid #e1e1e1;
       background: #fff;
       padding: 1rem;
       margin-bottom: 1.5%;
       align-items: center;
+      .checkbox{
+        width: 10%;
+        text-align: center;
+        margin-right: 1rem;
+      }
       .img-link{
         width: 30%;
       }
       img{
-        width:90%;
-        padding: 5%;
+        width:10rem;
+        padding: .5rem;
         border: 1px solid #aaa;
       }
       .desc{
         width: 30%;
-        margin-right: 2rem;
+        margin: 0 2rem;
       }
       .qty{
-        font-size: 0;
+        /*font-size: 0;*/
         margin-top: 2rem;
+        display:flex;
+
         span{
           display: inline-block;
           border: 1px solid #aaa;
-          width: 2rem;
+          width: 2.4rem;
+          height: 2.4rem;
+          line-height: 2.4rem;
           text-align: center;
-          font-size: 1.6rem;
+          font-size: 2rem;
         }
         .count{
           width: 3rem;
+          border: 1px solid #aaa;
+          outline: none;
           border-right: none;
           border-left: none;
+          text-align: center;
+          font-size: 1.4rem;
         }
 
       }
       .price {
         font-weight: bold;
         font-size: 1.6rem;
+        white-space: nowrap;
       }
     }
+  }
+  .footer{
+    position: fixed;
+    width: 100%;
+    bottom: 0;
   }
 
 </style>

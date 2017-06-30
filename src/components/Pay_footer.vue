@@ -2,7 +2,11 @@
   <ul class="pay-footer">
     <li class="lt">
       <input type="checkbox" name="" id="selectAll" v-model="selAll" @click="sendAll()">
-      <label for="selectAll">全选</label>
+      <label for="selectAll" :class="{bgposition: selAll}">
+        <b>
+          全选
+        </b>
+      </label>
     </li>
     <li class="md">
       合计： ￥{{amount}}
@@ -24,9 +28,9 @@ export default {
     return {
       selAll: true,
       bgcolor: '#c71f2c',
+      bgposition: true,
     }
   },
-
   computed: {
     amount: function() {//总金额Array reduce API ，一定要写初始值，否则报错
       return this.selItems.reduce( function (p,v){
@@ -39,6 +43,7 @@ export default {
             return p+v.count
         },0)
     },
+
   },
   watch: {
     'selItems': function() {//根据所选产品的变化，判断全选按钮是否被选中
@@ -50,7 +55,7 @@ export default {
  },
   methods: {
     sendAll () {
-      this.selAll = !this.selAll;
+      //this.selAll = !!this.selAll;
       this.$emit('input',this.selAll);
     },
   },
@@ -66,13 +71,29 @@ export default {
     color: #fff;
     line-height: 4.5rem;
     font-weight: bold;
+    label {
+      margin-left: -3rem;
+      position:absolute;
+      top:12px;
+      b{
+        position: absolute;
+        display: inline-block;
+        top: -10px;
+        left: 25px;
+      }
+    }
+
     > li {
       text-align: center;
       background: #414141;
-      width: 33.33%;
+      position: relative;
     }
-    .lf {
+    .lt {
       background-size: 2.5rem;
+      width: 25%;
+    }
+    .md{
+      width: 35%;
     }
     .rt {
       /*background: #c71f2c;*/
