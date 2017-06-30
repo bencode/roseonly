@@ -3,7 +3,7 @@
     <h2>购物车</h2>
     <div class="mylist">
       <ul>
-        <li v-for="(item,index) in items" v-if="item.count!=0">
+        <li v-for="(item,index) in items">
           <div class="checkbox">
             <input type="checkbox" v-model="item.selected" :id="`label${index}`">
             <label :for="`label${index}`" :class="{bgposition: item.selected}"></label>
@@ -16,7 +16,7 @@
             <br> {{item.series}}  {{item.qty + item.size}}
             <div class="qty">
               <span @click="reduce(item.count,index)"> - </span>
-              <input type="text" :value="item.count" class="count">
+              <input type="text" :value="item.count" class="count" @change="input(item.count,index)" v-model.lazy.number="item.count">
               <span @click="add(item.count,index)"> + </span>
             </div>
           </div>
@@ -52,7 +52,7 @@
     data () {
       return {
         items: [],
-        count: '',
+        inputCount: '',
       }
     },
     computed: {
@@ -82,6 +82,9 @@
       },
       add (count,i) {
         count++;
+        postData.call(this,count,i);
+      },
+      input (count,i) {
         postData.call(this,count,i);
       },
       getAll (v) {

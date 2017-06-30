@@ -12,7 +12,7 @@
       合计： ￥{{amount}}
     </li>
     <li class="rt">
-      <router-link to="/login" :style="{background:bgcolor}">去结算({{qty}})</router-link>
+      <router-link to="/login" :style="{background:bgcolor}">去结算({{parseInt(qty)}})</router-link>
     </li>
   </ul>
 </template>
