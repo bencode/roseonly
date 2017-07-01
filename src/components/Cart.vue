@@ -1,27 +1,34 @@
 <template>
-  <div class="mycart">
+  <div class="mycart" :style="{minHeight:minH}">
     <h2>购物车</h2>
-    <div class="mylist">
-      <ul>
-        <li v-for="(item,index) in items">
-          <div class="checkbox">
-            <input type="checkbox" v-model="item.selected" :id="`label${index}`">
-            <label :for="`label${index}`" :class="{bgposition: item.selected}"></label>
-          </div>
-          <router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">
-            <img :src="`/static/img/product/${item.simg}`" alt="">
-          </router-link>
-          <div class="desc">
-            <b>{{item.name}}</b>
-            <br> {{item.series}}  {{item.qty + item.size}}
-            <div class="qty">
-              <span @click="reduce(item.count,index)"> - </span>
-              <input type="text" :value="item.count" class="count" @change="input(item.count,index)" v-model.lazy.number="item.count">
-              <span @click="add(item.count,index)"> + </span>
+    <div class="list_box">
+      <ul class="list">
+        <v-touch tag="li" v-for="(item,index) in items" @panstart="moveStart" @panmove="move(index,$event)" @panend = "finishMove(index)">
+          <slot name="mainContent">
+            <div class="main">
+              <div class="checkbox">
+                <input type="checkbox" v-model="item.selected" :id="`label${index}`">
+                <label :for="`label${index}`" :class="{bgposition: item.selected}"></label>
+              </div>
+              <router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">
+                <img :src="`/static/img/product/${item.simg}`" alt="">
+              </router-link>
+              <div class="desc">
+                <b>{{item.name}}</b>
+                <br> {{item.series}}  {{item.qty + item.size}}
+                <div class="qty">
+                  <span @click="reduce(item.count,index)"> - </span>
+                  <input type="text" :value="item.count" class="count" @change="input(item.count,index)" v-model.lazy.number="item.count">
+                  <span @click="add(item.count,index)"> + </span>
+                </div>
+              </div>
+              <span class="price">￥ {{item.price}}</span>
             </div>
-          </div>
-          <span class="price">￥ {{item.price}}</span>
-        </li>
+          </slot>
+          <slot name="rightBtn">
+            <div class="delete" @click="deleteList(index,item.pid,item.cid)">删除</div>
+          </slot>
+        </v-touch>
       </ul>
     </div>
     <div class="footer">
@@ -32,11 +39,17 @@
 
 <script>
   import payFooter from './Pay_footer.vue'
+//  import list from './List.vue'
   import bus from './bus.js';
   bus.$on('selectedItem',function(items) {
-    console.log(items);
     return itemsList = items;
   });
+
+  const rex = /\.*translateX\((.*)px\)/;
+  const delegation = 100;//删除按钮的宽
+  let move = 0;
+  let translateX;
+
   function postData(count,i) {
     const url = 'http://localhost:8060/cart/count';
     this.items[i].count = count;
@@ -45,7 +58,10 @@
     this.$http.post(url,data,{emulateJSON: true}).then(res => {
       this.items = res.body;
     })
+
   }
+
+
 
   export default {
     name: 'mycart',
@@ -53,6 +69,8 @@
       return {
         items: [],
         inputCount: '',
+        minH: screen.height+'px',
+
       }
     },
     computed: {
@@ -63,6 +81,7 @@
       },
     },
     components: {
+//      list,
       payFooter
     }
     ,
@@ -71,12 +90,20 @@
       this.$http.get(url,{emulateJSON: true}).then(res => {
         this.items = res.body;
       },res => {});
+      //初始化所有li的位移为0
+      const lis = document.querySelectorAll('.list li');
+      for(let i=0;i<lis.length;i++){
+          lis[i].style.transform = 'translateX(' + 0 + 'px)';
+      }
+      //将主题内容的最小高度设置为移动设备屏幕的高
+      const mycart = document.querySelector(".mycart");
     },
-    methods: {
+
+    methods:{
       reduce (count,i) {
         count--;
         if(count <= 0 ) {
-         count = 0;
+          count = 0;
         }
         postData.call(this,count,i);
       },
@@ -91,17 +118,83 @@
         if(v){
           this.selAll = true;
           this.items.forEach(function(v) {
-            v.selected = true;
+              v.selected = true;
           })
-           //请求服务器
+          //请求服务器
         }else{
           this.selAll = false;
           this.items.forEach(function(v) {
-            v.selected = false;
+              v.selected = false;
           })
           //请求服务器
         }
       },
+
+      moveStart (){
+        const lis = document.querySelectorAll('.list li');//不能写实例外面，只能写里面
+        for(let i=0;i<lis.length;i++){//开始滑动时，将所有的li的位移设置为0
+            lis[i].style.transform = 'translateX(' + 0 + 'px)';
+        }
+      },
+      move (i,e) {//左右滑动，显示删除按钮
+        const lis = document.querySelectorAll('.list li');
+        translateX = parseFloat(rex.exec(lis[i].style.transform)[1]);//读取已有位移
+        if( translateX >= -delegation && translateX <= 0 ){
+          if(!(translateX == 0 && e.deltaX>0) && !(translateX == -delegation && e.deltaX<0)){
+              move = translateX + e.deltaX;
+              if(move>0) move=0;
+              if(move<-delegation) move=-delegation;
+              lis[i].style.transform = 'translateX(' + move + 'px)';
+          }
+        }
+      },
+//      分别设置左右滑动，不是很平滑，需要再检查
+//      moveLeft (i,e) {
+//        const lis = document.querySelectorAll('.list li');
+//        translateX = parseFloat(rex.exec(lis[i].style.transform)[1]);//读取已有位移
+//        move = translateX + e.deltaX;//新位移 = 已有位移 + x轴移动距离
+////        console.log(move);
+//        if(move<-delegation) {
+//          move = -delegation;
+//        }
+//        lis[i].style.transform = 'translateX(' + move + 'px)';
+//      },
+//      moveRight (i,e) {
+//        const lis = document.querySelectorAll('.list li');
+//        translateX = parseFloat(rex.exec(lis[i].style.transform)[1]);
+//        move = translateX + e.deltaX;
+//        console.log(move);
+//        if(move>0) {
+//          move = 0;
+//        }
+//        lis[i].style.transform = 'translateX(' + move + 'px)';
+//      },
+      finishMove (i) {
+        const lis = document.querySelectorAll('.list li');
+        if(move>0){//右滑结束
+          if(move>delegation/2){
+              lis[i].style.transform = 'translateX(' + 0 + 'px)';
+          }else{
+              lis[i].style.transform = 'translateX(' + (-delegation) + 'px)';
+          }
+        }
+        if(move<0){//左滑结束
+          if(move<-delegation/2){
+              lis[i].style.transform = 'translateX(' + (-delegation) + 'px)';
+          }else{
+              lis[i].style.transform = 'translateX(' + 0 + 'px)';
+          }
+        }
+      },
+      deleteList (i) {
+        this.items.splice(i,1);
+        const url = 'http://localhost:8060/cart/delete';
+        const cartItems = JSON.stringify(this.items);
+        const data ={cartItems};
+        this.$http.post(url,data,{emulateJSON: true}).then(res => {
+            this.items = res.body;
+        })
+      }
     }
   }
 </script>
@@ -115,15 +208,35 @@
     border-bottom: 1px solid #e1e1e1;
     background: #ddd;
   }
-  .mylist{
+  .mycart{
     background: #ddd;
+    margin-bottom: 45px;
+  }
+
+  .list_box{
+    background: #ddd;
+    width: 100%;
+    overflow: hidden;
     li {
       display: flex;
-      border: 1px solid #e1e1e1;
-      background: #fff;
-      padding: 1rem;
-      margin-bottom: 1.5%;
-      align-items: center;
+      /*transform: translate(0);*/
+      /*border: 1px solid #e1e1e1;*/
+      /*background: #fff;*/
+      /*margin-bottom: 1.5%;*/
+      /*align-items: center;*/
+      /*flex-wrap: nowrap;*/
+      /*white-space: nowrap;*/
+      width:125%;
+      overflow: hidden;
+      .main{
+        display: flex;
+        /*border: 1px solid #e1e1e1;*/
+        background: #fff;
+        margin-bottom: 1.5%;
+        align-items: center;
+        /*overflow: hidden;*/
+        width: 100%;
+      }
       .checkbox{
         width: 10%;
         text-align: center;
@@ -136,6 +249,8 @@
         width:10rem;
         padding: .5rem;
         border: 1px solid #aaa;
+        vertical-align: middle;
+        margin: 2rem 0;
       }
       .desc{
         width: 30%;
@@ -145,7 +260,6 @@
         /*font-size: 0;*/
         margin-top: 2rem;
         display:flex;
-
         span{
           display: inline-block;
           border: 1px solid #aaa;
@@ -164,13 +278,24 @@
           text-align: center;
           font-size: 1.4rem;
         }
-
       }
       .price {
         font-weight: bold;
         font-size: 1.6rem;
         white-space: nowrap;
+        width: 30%;
       }
+    }
+    .delete {
+      width:10rem;
+      background: #c71f2c;
+      line-height: 14rem;
+      height:14rem;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      display: inline-block;
+
     }
   }
   .footer{

@@ -6,6 +6,7 @@ import router from './router'
 import VueLazyload from 'vue-lazyload'//图片懒加载
 import VueResource from 'vue-resource';
 import VueSwiper from 'vue-swiper';
+import  VueTouch from 'vue-touch';
 
 
 Vue.config.productionTip = false
@@ -21,6 +22,7 @@ Vue.use(VueLazyload, {
 
 Vue.use(VueResource);
 Vue.use(VueSwiper);
+Vue.use(VueTouch, {name: 'v-touch'});
 
 Vue.http.options.credentials = true;//让Ajax请求在跨域下发送cookie，默认不发送cookie
 
@@ -31,6 +33,5 @@ new Vue({
   components: { App }
 })
 
-var bus = new Vue()
 
 

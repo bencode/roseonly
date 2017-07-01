@@ -55,23 +55,7 @@ app.post('/register',cors(),user.register);
 app.post('/add_to_cart',cors(issue2options),product.addCart);
 app.get('/cart',cors(issue2options), product.cart);
 app.post('/cart/count',cors(issue2options),product.count);
-// app.post('/cart/select',cors(issue2options),product.select);
-
-
-
-
-
-
-// app.post('/change_count',cors(),(req,res) => {
-//     var p_id = req.body.pid;
-//     var c_id = req.body.cid;
-//     var count = req.body.count;
-//     items.forEach(function(v){
-//         if(v.pid == p_id && v.cid == c_id){
-//             v.count = count;
-//         }
-//     })
-// })
+app.post('/cart/delete',cors(issue2options),product.delete);
 
 
 

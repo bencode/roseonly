@@ -1,9 +1,11 @@
 <template>
   <div class="header">
-    <div class="icon-bar">
-      <span></span>
-      <span></span>
-    </div>
+    <slot>
+      <div class="icon-bar">
+        <span></span>
+        <span></span>
+      </div>
+    </slot>
     <div class="main-logo">
       <router-link to="/index">
       <img src="/static/img/nav_logo.png" alt="头部logo">
