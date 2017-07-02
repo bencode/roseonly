@@ -69,7 +69,7 @@
       return {
         items: [],
         inputCount: '',
-        minH: screen.height+'px',
+        minH: (screen.height-50-45)+'px',//50和40
 
       }
     },
@@ -90,13 +90,14 @@
       this.$http.get(url,{emulateJSON: true}).then(res => {
         this.items = res.body;
       },res => {});
+    },
+    mounted: function () {
       //初始化所有li的位移为0
       const lis = document.querySelectorAll('.list li');
-      for(let i=0;i<lis.length;i++){
+      for(let i=0;i<lis.length;i++) {
+          console.log(1);
           lis[i].style.transform = 'translateX(' + 0 + 'px)';
       }
-      //将主题内容的最小高度设置为移动设备屏幕的高
-      const mycart = document.querySelector(".mycart");
     },
 
     methods:{
@@ -226,7 +227,8 @@
       /*align-items: center;*/
       /*flex-wrap: nowrap;*/
       /*white-space: nowrap;*/
-      width:125%;
+      width: 126%;/*数字有点问题*/
+      /*width: calc(100% + 10rem);!*css3的内容，如果设备不支持会用上面的宽度*!*/
       overflow: hidden;
       .main{
         display: flex;
@@ -236,6 +238,7 @@
         align-items: center;
         /*overflow: hidden;*/
         width: 100%;
+        /*width:calc(100% - 10rem);!*css3的内容，如果设备不支持会用上面的宽度*!*/
       }
       .checkbox{
         width: 10%;

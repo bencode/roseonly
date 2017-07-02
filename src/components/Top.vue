@@ -12,7 +12,6 @@
       </router-link>
     </div>
     <div class="user">
-      <img clas="uname" src="/static/img/nav_user.png" alt="用户">
       <router-link to="/cart" class="cart-link">
       <img class="cart" src="/static/img/nav_car.png" alt="购物车">
       <span class="count" v-show="count">{{count}}</span>

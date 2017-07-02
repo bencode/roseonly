@@ -47,10 +47,34 @@
         </div>
       </div>
     </section>
+    <!--<footer id="footer-nav">-->
+      <!--<footer-nav>-->
+        <!--<ul class="nav">-->
+          <!--<li>-->
+            <!--<router-link to="/index" class="home">主页</router-link>-->
+          <!--</li>-->
+          <!--<li>-->
+            <!--<router-link to="/index" class="group">分类</router-link>-->
+          <!--</li>-->
+          <!--<li>-->
+            <!--<router-link to="/index" class="activity">活动</router-link>-->
+          <!--</li>-->
+          <!--<li>-->
+            <!--<router-link to="/cart" class="shoppingbag">购物袋</router-link>-->
+          <!--</li>-->
+          <!--<li>-->
+            <!--<router-link to="/login" class="mine">我的</router-link>-->
+          <!--</li>-->
+
+        <!--</ul>-->
+      <!--</footer-nav>-->
+    <!--</footer>-->
+
   </div>
 </template>
 
 <script>
+import footerNav from './Footer.vue';
 import a from '../../static/img/slider1.jpg';
 import b from '../../static/img/slider2.jpg';
 import c from '../../static/img/slider3.jpg';
@@ -93,6 +117,9 @@ export default {
     }
   },
   // 组件挂载后设置，
+  components: {
+    footerNav,
+  },
   mounted () {
     var swiper = new Swiper('.swiper-container', {
       pagination: '.swiper-pagination',
@@ -165,8 +192,33 @@ export default {
         /*width: 50%;*/
       }
     }
-
   }
+  /*#footer-nav {*/
+    /*a {*/
+      /*text-indent: -9999px;*/
+      /*background: url("/static/img/btn_menu.png") no-repeat;*/
+      /*background-size: auto 100%;*/
+      /*width: 22px;*/
+      /*}*/
+    /*.home {*/
+      /*background-position: -27px 0 ;*/
+    /*}*/
+    /*.group {*/
+      /*background-position: -54px 0 ;*/
+    /*}*/
+    /*.activity {*/
+      /*background-position: -108px 0 ;*/
+    /*}*/
+    /*.shoppingbag {*/
+      /*background-position: -153px 0 ;*/
+      /*width: 35px*/
+    /*}*/
+    /*.mine {*/
+      /*background-position: -290px 0 ;*/
+    /*}*/
+
+  /*}*/
+
 
 
 

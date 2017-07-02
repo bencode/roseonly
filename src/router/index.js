@@ -21,6 +21,16 @@ export default new Router({
       component: Index,
     },
     {
+      path: '/group',
+      name: 'group',
+      component: Index,
+    },
+    {
+      path: '/activity',
+      name: 'activity',
+      component: Index,
+    },
+    {
       path: '/detail/pid/:pid/cid/:cid',
       name: 'detail',
       component: Detail

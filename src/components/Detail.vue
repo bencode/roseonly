@@ -66,15 +66,27 @@
     <recomend></recomend>
     </div>
     <footer id="footer">
-      <myfooter :colors="colors"></myfooter>
+      <footer-nav :colors="colors">
+        <ul class="nav">
+          <li class="lf">客服</li>
+          <li class="md">
+            <router-link to="/login">立即购买</router-link>
+          </li>
+          <li class="rt" @click="addToCart">加入购物车</li>
+          <li class="modal" :style="styleObj" v-if="showModal">
+            <modal @input="isShowing"></modal>
+          </li>
+        </ul>
+      </footer-nav>
     </footer>
   </div>
 </template>
 
 <script>
 import top from './Top.vue';
-import myfooter from './Footer.vue';
+import footerNav from './Footer.vue';
 import recomend from './Recomend.vue';
+import modal from './Modal.vue';
 export default {
   name: 'prod-detail',
   data () {
@@ -95,8 +107,9 @@ export default {
      }
   },
   components: {
-    myfooter,
+    footerNav,
     recomend,
+      modal,
   },
   mounted () {
     var swiper = new Swiper('.swiper-container', {
@@ -270,13 +283,13 @@ export default {
   #recomend-box {
     margin-bottom: 4.5rem;
   }
-  #footer {
-    position: fixed;
-    bottom:0;
-    z-index: 99;
-    width:100%;
-    height: 4.5rem;
-  }
+  /*#footer {*/
+    /*!*position: fixed;*!*/
+    /*!*bottom:0;*!*/
+    /*!*z-index: 99;*!*/
+    /*!*width:100%;*!*/
+    /*!*height: 4.5rem;*!*/
+  /*}*/
 
 
 
