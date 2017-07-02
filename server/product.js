@@ -109,4 +109,12 @@ module.exports ={
     req.session.items = items;
     res.json(items);
   },
+  cartItems: (req,res)=>{
+   const sessionItems =  req.session.items ;
+   if( sessionItems.length != 0) {
+     res.json({data: true});
+   }else {
+     res.json({data: false})
+   }
+  }
 };

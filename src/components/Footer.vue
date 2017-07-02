@@ -20,45 +20,13 @@ import modal from './Modal.vue'
 import bus from './bus.js';
 export default {
   name: 'footer-container',
-  props: ['colors'],
   data () {
     return {
-      showModal: false,
-      styleObj: {
-        height: 0
-      },
-      selected : [],
     }
   },
   components: {
-     modal
   },
   methods: {
-    addToCart () {
-      let count = 1;
-      var cimg = this.colors.filter( (v) => v.isCurrent === true)[0].co_img;
-      console.log(this.selected);
-      this.showModal = true;
-      this.styleObj.height = window.screen.height +'px';
-      //引入购物车动画插件
-      rocketcss('.color-img li.current','.cart', 'rocketPulseHole',1000);
-      $('.cart').addClass('targetPulse');
-      bus.$emit('addCount', count)//点击一次向购物车增加1
-
-      //点击'加入购物车'，使用Ajax向服务端发送当前产品数据
-      var url = 'http://localhost:8060/add_to_cart'
-      var pid = this.$route.params.pid;
-      var cid = this.$route.params.cid;
-      var data = {pid: pid, cid: cid, cimg: cimg, count: 1};
-      this.$http.post(url,data,{emulateJSON: true});
-    },
-    isShowing (bool) {
-      this.showModal = bool;
-
-
-    },
-
-
   },
 
 }

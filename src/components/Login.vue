@@ -4,17 +4,17 @@
       <form method="post">
         <ul class="login-info">
           <li>
-            国家和地区：<input type="select" name="country" value="中国" ref="country">
+            国家和地区：<input type="select" name="country" value="country" ref="country" v-model.lazy.trim="country">
           </li>
           <li>
-            <span class="ctr-code">+86</span><input type="text" name="account" placeholder="请输入手机号码/邮箱" ref="account">
+            <span class="ctr-code">+86</span><input type="text" name="account" placeholder="请输入手机号码/邮箱" ref="account" v-model.lazy.trim="account" :value="account">
           </li>
           <li>
-            密码：<input type="password" name="pwd" placeholder="请输入密码" ref="pwd">
+            密码：<input type="password" name="pwd" placeholder="请输入密码" ref="pwd" v-model.lazy.trim="pwd" :value="pwd">
           </li>
         </ul>
         <p class="recall-pwd"><a href="">找回密码</a></p>
-        <button type="button" @click="postData">登录</button>
+        <button type="button" @click="postData" :style="{background: btnBg}" :disabled="isButtonDisabled" @touchstart="changeBtnColor" @touchend="resumeBtnColor">登录</button>
       </form>
       <p class="to-register">
         <router-link to="/register">快速注册</router-link>
@@ -33,7 +33,27 @@
     name: 'app',
     data () {
       return {
-          msg: ''
+        country: '中国',
+        account: '',
+        pwd:'',
+        btnBg: "rgb(225, 225, 225)",
+        isButtonDisabled: 'disabled',
+      }
+    },
+    computed: {
+      userData () {
+        return this.country && this.account && this.pwd;
+      },
+    },
+    watch: {
+      'userData' : function () {
+        console.log(this.userData);
+        if (this.userData) {
+          this.btnBg = "green";
+          this.isButtonDisabled = null;
+        } else {
+          this.btnBg = "rgb(225, 225, 225)"
+        }
       }
     },
     // 组件创建完后获取数据，
@@ -43,20 +63,20 @@
     methods: {
       postData () {
       //验证账号和密码格式
-        let country = this.$refs.country.value;
-        let account = this.$refs.account.value;
-        let pwd = this.$refs.pwd.value;
-        //console.log(account,pwd);
-        if(testAccount(account) === false || testPwd(pwd) === false ){
+        if(testAccount(this.account) === false || testPwd(this.pwd) === false ){
             return
         };
         //通过ajax提交至后台查询
         var url = 'http://localhost:8060/login';
-        var data = {account: account, pwd: pwd, country: country};
+        var data = {account: this.account, pwd: this.pwd, country: this.country};
         // POST /someUrl
         this.$http.post(url, data, {emulateJSON: true}).then(res => {//请求成功时的回调
           //alert('服务器请求成功');
           console.log(res.body);//response.body服务器发送的结果对象
+          //将uid,uname保存到sessionStorage
+          sessionStorage['uid'] = res.body.uid;
+          sessionStorage['uname'] = res.body.uname;
+
           if(res.body.code === 1){
             setTimeout(function(){
               window.location = '/order'
@@ -68,7 +88,19 @@
           alert('服务器请求失败，请重新登录')
         });
 
+      },
+      changeBtnColor () {
+        if(this.userData){
+          this.btnBg ='#015801';
+        }
+      },
+      resumeBtnColor () {
+        if(this.userData){
+          this.btnBg ='green';
+        }
+
       }
+
     },
 
 
@@ -118,6 +150,7 @@
     font-weight: bold;
     border: none;
     border-radius: 3px;
+    outline: none;
 
   }
   .recall-pwd {

@@ -12,7 +12,7 @@
       合计： ￥{{amount}}
     </li>
     <li class="rt">
-      <router-link to="/login" :style="{background:bgcolor}">去结算({{parseInt(qty)}})</router-link>
+      <router-link :to="toPay" :style="{background:bgcolor}">去结算({{parseInt(qty)}})</router-link>
     </li>
   </ul>
 </template>
@@ -27,22 +27,30 @@ export default {
   data () {
     return {
       selAll: true,
-      bgcolor: '#c71f2c',
+      bgcolor: '#ddd',
       bgposition: true,
     }
   },
   computed: {
-    amount: function() {//总金额Array reduce API ，一定要写初始值，否则报错
+    amount () {//总金额Array reduce API ，一定要写初始值，否则报错
       return this.selItems.reduce( function (p,v){
-          return  p + v.price * v.count;
+        return  p + v.price * v.count;
 
       },0);
     },
-    qty: function() {
-        return this.selItems.reduce( function (p,v){
-            return p+v.count
-        },0)
+    qty () {
+      return this.selItems.reduce( function (p,v){
+        return p+v.count
+      },0)
     },
+    toPay () {
+      const uid = sessionStorage.uid;
+      if(uid) {
+        return '/order'
+      }else{
+        return '/login'
+      }
+    }
 
   },
   watch: {

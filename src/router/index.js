@@ -6,6 +6,8 @@ import Cart from '@/components/Cart.vue'
 import Login from '@/components/Login.vue'
 import Register from '@/components/Register.vue'
 import Order from '@/components/Order.vue'
+import MyCenter from '@/components/Personal_center.vue'
+
 Vue.use(Router);
 export default new Router({
   mode: 'history',
@@ -54,6 +56,11 @@ export default new Router({
       path:'/order',
       name:'order',
       component: Order
+    },
+    {
+      path:'/personal_center',
+      name:'myCenter',
+      component: MyCenter
     }
   ],
   scrollBehavior (to, from, savedPosition) {

@@ -70,7 +70,7 @@
         <ul class="nav">
           <li class="lf">客服</li>
           <li class="md">
-            <router-link to="/login">立即购买</router-link>
+            <router-link :to="link">立即购买</router-link>
           </li>
           <li class="rt" @click="addToCart">加入购物车</li>
           <li class="modal" :style="styleObj" v-if="showModal">
@@ -87,8 +87,10 @@ import top from './Top.vue';
 import footerNav from './Footer.vue';
 import recomend from './Recomend.vue';
 import modal from './Modal.vue';
+import bus from './bus.js';
 export default {
   name: 'prod-detail',
+//  props:['buyLink'],
   data () {
     return {
       //detailProducts: '',
@@ -97,14 +99,21 @@ export default {
       colors: [],
       mainImgs: [],
       introImgs: [],
-      //isCurrent: false,
-
+      showModal: false,
+      styleObj: {
+        height: 0
+      },
+      selected : [],
+      isLogin: false,
     }
   },
   computed: {
      currentColor () {
-
-     }
+     },
+    link () {
+      const uid = sessionStorage.uid;
+      return uid ? '/order' : '/login'
+    }
   },
   components: {
     footerNav,
@@ -130,7 +139,6 @@ export default {
   watch: {
     // 如果路由有变化，会再次执行该方法
     '$route' : 'fetchData'
-
   },
   methods: {
     fetchData () {
@@ -172,10 +180,28 @@ export default {
         this.introImgs = introImgs;
       })
     },
+    addToCart () {
+      let count = 1;
+      var cimg = this.colors.filter( (v) => v.isCurrent === true)[0].co_img;
+      console.log(this.selected);
+      this.showModal = true;
+      this.styleObj.height = window.screen.height +'px';
+      //引入购物车动画插件
+      rocketcss('.color-img li.current','.cart', 'rocketPulseHole',1000);
+      $('.cart').addClass('targetPulse');
+      bus.$emit('addCount', count)//点击一次向购物车增加1
+
+      //点击'加入购物车'，使用Ajax向服务端发送当前产品数据
+      const url = 'http://localhost:8060/add_to_cart'
+      const pid = this.$route.params.pid;
+      const cid = this.$route.params.cid;
+      const data = {pid: pid, cid: cid, cimg: cimg, count: 1};
+      this.$http.post(url,data,{emulateJSON: true});
+    },
+    isShowing (bool) {
+      this.showModal = bool;
+    },
   },
-
-
-
 }
 
 </script>

@@ -2,6 +2,13 @@
   <div class="mycart" :style="{minHeight:minH}">
     <h2>购物车</h2>
     <div class="list_box">
+      <p v-if="loading">
+        正在加载，请稍后...
+      </p>
+      <p v-if=" update === true && items.length === 0">
+        您还没有选购任何商品，快去选购吧
+        <router-link to="/index" class="index_page">首页</router-link>
+      </p>
       <ul class="list">
         <v-touch tag="li" v-for="(item,index) in items" @panstart="moveStart" @panmove="move(index,$event)" @panend = "finishMove(index)">
           <slot name="mainContent">
@@ -70,7 +77,8 @@
         items: [],
         inputCount: '',
         minH: (screen.height-50-45)+'px',//50和40
-
+        loading: false,
+        update: false,
       }
     },
     computed: {
@@ -86,10 +94,16 @@
     }
     ,
     created: function () {
+      //正在加载中,数据未更新
+      this.loading = true;
+      this.update = false;
       const url = 'http://localhost:8060/cart';
       this.$http.get(url,{emulateJSON: true}).then(res => {
+        //加载完成，数据已更新
+        this.loading = false;
         this.items = res.body;
-      },res => {});
+        this.update = true;
+      })
     },
     mounted: function () {
       //初始化所有li的位移为0
@@ -218,6 +232,14 @@
     background: #ddd;
     width: 100%;
     overflow: hidden;
+    >p{
+    text-align: center;
+    line-height: 1.5;
+    .index_page{
+      text-decoration: underline;
+
+    }
+     }
     li {
       display: flex;
       /*transform: translate(0);*/
