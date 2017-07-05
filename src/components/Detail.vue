@@ -63,7 +63,7 @@
     </div>
     <div id="recomend-box">
       <!--热卖推荐-->
-    <recomend></recomend>
+    <recomend/>
     </div>
     <footer id="footer">
       <footer-nav :colors="colors">

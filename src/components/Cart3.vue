@@ -9,62 +9,34 @@
         您还没有选购任何商品，快去选购吧
         <router-link to="/index" class="index_page">首页</router-link>
       </p>
-      <div class="items_box">
-        <ul>
-          <li v-for="(item,index) in items">
-            <list @deleteItem="deleteItem">
-              <div slot="mainContent" class="main">
-                <div class="checkbox">
-                  <input type="checkbox" v-model="item.selected" :id="`label${index}`">
-                  <label :for="`label${index}`" :class="{bgposition: item.selected}"></label>
-                </div>
-                <router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">
-                  <img :src="`/static/img/product/${item.simg}`" alt="">
-                </router-link>
-                <div class="desc">
-                  <b>{{item.name}}</b>
-                  <br> {{item.series}}  {{item.qty + item.size}}
-                  <div class="qty">
-                    <span @click="reduce(item.count,index)"> - </span>
-                    <input type="text" :value="item.count" class="count" @change="input(item.count,index)" v-model.lazy.number="item.count">
-                    <span @click="add(item.count,index)"> + </span>
-                  </div>
-                </div>
-                <span class="price">￥ {{item.price}}</span>
+      <ul class="list">
+        <v-touch tag="li" v-for="(item,index) in items" @panstart="moveStart" @panmove="move(index,$event)" @panend = "finishMove(index)">
+          <slot name="mainContent">
+            <div class="main">
+              <div class="checkbox">
+                <input type="checkbox" v-model="item.selected" :id="`label${index}`">
+                <label :for="`label${index}`" :class="{bgposition: item.selected}"></label>
               </div>
-            </list>
-          </li>
-        </ul>
-
-      </div>
-      <!--<ul class="list">-->
-        <!--<v-touch tag="li" v-for="(item,index) in items" @panstart="moveStart" @panmove="move(index,$event)" @panend = "finishMove(index)">-->
-          <!--<slot name="mainContent">-->
-            <!--<div class="main">-->
-              <!--<div class="checkbox">-->
-                <!--<input type="checkbox" v-model="item.selected" :id="`label${index}`">-->
-                <!--<label :for="`label${index}`" :class="{bgposition: item.selected}"></label>-->
-              <!--</div>-->
-              <!--<router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">-->
-                <!--<img :src="`/static/img/product/${item.simg}`" alt="">-->
-              <!--</router-link>-->
-              <!--<div class="desc">-->
-                <!--<b>{{item.name}}</b>-->
-                <!--<br> {{item.series}}  {{item.qty + item.size}}-->
-                <!--<div class="qty">-->
-                  <!--<span @click="reduce(item.count,index)"> - </span>-->
-                  <!--<input type="text" :value="item.count" class="count" @change="input(item.count,index)" v-model.lazy.number="item.count">-->
-                  <!--<span @click="add(item.count,index)"> + </span>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<span class="price">￥ {{item.price}}</span>-->
-            <!--</div>-->
-          <!--</slot>-->
-          <!--<slot name="rightBtn">-->
-            <!--<div class="delete" @click="deleteList(index,item.pid,item.cid)">删除</div>-->
-          <!--</slot>-->
-        <!--</v-touch>-->
-      <!--</ul>-->
+              <router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">
+                <img :src="`/static/img/product/${item.simg}`" alt="">
+              </router-link>
+              <div class="desc">
+                <b>{{item.name}}</b>
+                <br> {{item.series}}  {{item.qty + item.size}}
+                <div class="qty">
+                  <span @click="reduce(item.count,index)"> - </span>
+                  <input type="text" :value="item.count" class="count" @change="input(item.count,index)" v-model.lazy.number="item.count">
+                  <span @click="add(item.count,index)"> + </span>
+                </div>
+              </div>
+              <span class="price">￥ {{item.price}}</span>
+            </div>
+          </slot>
+          <slot name="rightBtn">
+            <div class="delete" @click="deleteList(index,item.pid,item.cid)">删除</div>
+          </slot>
+        </v-touch>
+      </ul>
     </div>
     <div class="footer">
       <pay-footer @input="getAll" :allItems="items" :selItems="selItems" ></pay-footer>
@@ -74,16 +46,16 @@
 
 <script>
   import payFooter from './Pay_footer.vue'
-  import list from './List.vue'
+//  import list from './List.vue'
   import bus from './bus.js';
   bus.$on('selectedItem',function(items) {
     return itemsList = items;
   });
 
-//  const rex = /\.*translateX\((.*)px\)/;
-//  const delegation = 100;//删除按钮的宽
-//  let move = 0;
-//  let translateX;
+  const rex = /\.*translateX\((.*)px\)/;
+  const delegation = 100;//删除按钮的宽
+  let move = 0;
+  let translateX;
 
   function postData(count,i) {
     const url = 'http://localhost:8060/cart/count';
@@ -117,7 +89,7 @@
       },
     },
     components: {
-      list,
+//      list,
       payFooter
     }
     ,
@@ -140,7 +112,6 @@
           console.log(1);
           lis[i].style.transform = 'translateX(' + 0 + 'px)';
       }
-      console.log(this.items);
     },
 
     methods:{
@@ -230,7 +201,7 @@
           }
         }
       },
-      deleteItem (i) {
+      deleteList (i) {
         this.items.splice(i,1);
         const url = 'http://localhost:8060/cart/delete';
         const cartItems = JSON.stringify(this.items);
@@ -271,15 +242,21 @@
      }
     li {
       display: flex;
-      margin-bottom: 1.5%;
-      width: calc(100% + 10rem);/*css3的内容，如果设备不支持会用上面的宽度*/
+      /*transform: translate(0);*/
+      /*border: 1px solid #e1e1e1;*/
+      /*background: #fff;*/
+      /*margin-bottom: 1.5%;*/
+      /*align-items: center;*/
+      /*flex-wrap: nowrap;*/
+      /*white-space: nowrap;*/
+      width: 126%;/*数字有点问题*/
+      /*width: calc(100% + 10rem);!*css3的内容，如果设备不支持会用上面的宽度*!*/
       overflow: hidden;
-      background: #fff;
       .main{
         display: flex;
         /*border: 1px solid #e1e1e1;*/
         background: #fff;
-        /*margin-bottom: 1.5%;*/
+        margin-bottom: 1.5%;
         align-items: center;
         /*overflow: hidden;*/
         width: 100%;
@@ -302,31 +279,30 @@
       }
       .desc{
         width: 30%;
-        margin-left: 1rem;
-        white-space: normal;
+        margin: 0 2rem;
       }
       .qty{
         /*font-size: 0;*/
         margin-top: 2rem;
         display:flex;
-      span{
-        display: inline-block;
-        border: 1px solid #aaa;
-        width: 2.4rem;
-        height: 2.4rem;
-        line-height: 2.4rem;
-        text-align: center;
-        font-size: 2rem;
-      }
-      .count{
-        width: 3rem;
-        border: 1px solid #aaa;
-        outline: none;
-        border-right: none;
-        border-left: none;
-        text-align: center;
-        font-size: 1.4rem;
-      }
+        span{
+          display: inline-block;
+          border: 1px solid #aaa;
+          width: 2.4rem;
+          height: 2.4rem;
+          line-height: 2.4rem;
+          text-align: center;
+          font-size: 2rem;
+        }
+        .count{
+          width: 3rem;
+          border: 1px solid #aaa;
+          outline: none;
+          border-right: none;
+          border-left: none;
+          text-align: center;
+          font-size: 1.4rem;
+        }
       }
       .price {
         font-weight: bold;
@@ -335,14 +311,22 @@
         width: 30%;
       }
     }
+    .delete {
+      width:10rem;
+      background: #c71f2c;
+      line-height: 14rem;
+      height:14rem;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      display: inline-block;
 
+    }
   }
   .footer{
     position: fixed;
     width: 100%;
     bottom: 0;
   }
-
-
 
 </style>

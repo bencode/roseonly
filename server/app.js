@@ -56,7 +56,7 @@ app.post('/add_to_cart',cors(issue2options),product.addCart);
 app.get('/cart',cors(issue2options), product.cart);
 app.post('/cart/count',cors(issue2options),product.count);
 app.post('/cart/delete',cors(issue2options),product.delete);
-app.post('/index/cartItems',cors(issue2options),product.cartItems);
+app.get('/index/cartItems',cors(issue2options),product.cartItems);
 
 
 

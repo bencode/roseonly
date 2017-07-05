@@ -26,7 +26,7 @@ export default {
   props: ['allItems','selItems'],
   data () {
     return {
-      selAll: true,
+      selAll: false,
       bgcolor: '#ddd',
       bgposition: true,
     }
