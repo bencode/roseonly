@@ -4,7 +4,7 @@
       <slot name="mainContent">
       </slot>
     </div>
-    <div class="delete" @click="deleteList(index)">删除</div>
+    <div class="delete" @click="deleteList()">删除</div>
   </v-touch>
 </template>
 
@@ -16,6 +16,7 @@
   let translateX;
   export default {
     name: 'list_box',
+    props: ['index'],
     data () {
       return {
         translate: 'transformX(0px)'
@@ -66,8 +67,9 @@
           }
         }
       },
-      deleteList (i) {
-        this.$emit('deleteItem',i);
+      deleteList () {
+        this.$emit('deleteItem',this.index);
+        console.log('emit'+this.index);
       }
     }
   }

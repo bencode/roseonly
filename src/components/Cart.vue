@@ -12,7 +12,7 @@
       <div class="items_box">
         <ul>
           <li v-for="(item,index) in items">
-            <list @deleteItem="deleteItem">
+            <list :index="index" @deleteItem="deleteItem">
               <div slot="mainContent" class="main">
                 <div class="checkbox">
                   <input type="checkbox" v-model="item.selected" :id="`label${index}`">
@@ -37,34 +37,6 @@
         </ul>
 
       </div>
-      <!--<ul class="list">-->
-        <!--<v-touch tag="li" v-for="(item,index) in items" @panstart="moveStart" @panmove="move(index,$event)" @panend = "finishMove(index)">-->
-          <!--<slot name="mainContent">-->
-            <!--<div class="main">-->
-              <!--<div class="checkbox">-->
-                <!--<input type="checkbox" v-model="item.selected" :id="`label${index}`">-->
-                <!--<label :for="`label${index}`" :class="{bgposition: item.selected}"></label>-->
-              <!--</div>-->
-              <!--<router-link :to="`/detail/pid/${item.pid}/cid/${item.cid}`" class="img-link">-->
-                <!--<img :src="`/static/img/product/${item.simg}`" alt="">-->
-              <!--</router-link>-->
-              <!--<div class="desc">-->
-                <!--<b>{{item.name}}</b>-->
-                <!--<br> {{item.series}}  {{item.qty + item.size}}-->
-                <!--<div class="qty">-->
-                  <!--<span @click="reduce(item.count,index)"> - </span>-->
-                  <!--<input type="text" :value="item.count" class="count" @change="input(item.count,index)" v-model.lazy.number="item.count">-->
-                  <!--<span @click="add(item.count,index)"> + </span>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<span class="price">￥ {{item.price}}</span>-->
-            <!--</div>-->
-          <!--</slot>-->
-          <!--<slot name="rightBtn">-->
-            <!--<div class="delete" @click="deleteList(index,item.pid,item.cid)">删除</div>-->
-          <!--</slot>-->
-        <!--</v-touch>-->
-      <!--</ul>-->
     </div>
     <div class="footer">
       <pay-footer @input="getAll" :allItems="items" :selItems="selItems" ></pay-footer>
