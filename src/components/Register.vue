@@ -11,11 +11,11 @@
         </li>
         <li>
           图片码：<input type="select" name="imgCode" placeholder="请输入图片码" v-model="imgCode" :value="imgCode">
-          <img src="" alt="图片码" class="img-code" :title="correctImgCode">
+          <img :src="captcha" alt="图片码" class="img-code" :title="correctImgCode" @click="getCaptcha">
         </li>
         <li>
           短信码：<input type="select" name="msgCode"  placeholder="请输入验证码"  v-model="msgCode" :value="msgCode">
-          <span class="msg-code">{{correctMsgCode}}</span>
+          <span class="msg-code" @click="getMsgCode">{{time}}</span>
         </li>
         <li>
           密码：<input type="password" name="pwd" placeholder="请输入6-20位数字/字母密码" v-model="pwd" :value="pwd">
@@ -44,10 +44,17 @@
         imgCode: '',
         msgCode: '',
         pwd: '',
-        correctMsgCode: '1234',
+        captcha:'http://localhost:8060/register/captcha/1',
+        correctMsgCode: '',
           //'获取验证码',
-        correctImgCode: '1234',
+        correctImgCode: '',
+        seconds: '',
       //'获取图片码',
+      }
+    },
+    computed: {
+      time: function(){
+        return this.seconds || '获取验证码';
       }
     },
     methods: {
@@ -56,12 +63,10 @@
           return
         };
         //通过ajax提交至后台查询
-        var url = 'http://localhost:8060/register';
-        var data = {country: this.country, account: this.account, pwd: this.pwd,};
-        // POST /someUrl
+        const url = 'http://localhost:8060/register';
+        const data = {country: this.country, account: this.account, pwd: this.pwd,};
         this.$http.post(url, data, {emulateJSON: true}).then(res => {//请求成功时的回调
-          //alert('服务器请求成功');
-          console.log(res.body);//response.body服务器发送的结果对象
+          //console.log(res.body);//response.body服务器发送的结果对象
           if(res.body.code === 1){
             alert("注册成功");
             setTimeout(function(){
@@ -73,6 +78,38 @@
         }, res => {//请求失败时的回调
           alert('服务器请求失败，请重新注册')
         });
+
+      },
+      getCaptcha () {
+        let id = getRndInteger(100000, 999999);
+        const url = `http://localhost:8060/register/captcha/${id}`;
+        this.$http.get(url).then(res => {
+          this.captcha = url;
+        });
+      },
+      getMsgCode () {
+        if(this.seconds){
+          return
+        }
+        //获取手机验证码
+        const url = 'http://localhost:8060/register/msgcode';
+        const data = {tel: this.account};
+        this.$http.post(url, data, {emulateJSON: true}).then(res => {
+          this.correctMsgCode = res.body;
+          console.log('短信码 ： '+this.correctMsgCode);
+          //倒计时60s
+          this.seconds = Number(60);
+          const _this = this;
+          let timer = setInterval(function () {
+            _this.seconds --;
+            if(_this.seconds < 0){
+              _this.seconds = '';
+              clearInterval(timer);
+            }
+            console.log(_this.seconds);
+          },1000)
+        });
+
 
       }
     }
@@ -118,12 +155,17 @@
       width: 8rem;
       height: 3.5rem;
       display: inline-block;
-      background: rgb(210, 210, 210);
       border: none;
       border-radius: 3px;
       overflow: hidden;
       line-height: 3.5rem;
-      padding: 0 .5rem;
+      /*padding: 0 .5rem;*/
+      text-align: center;
+    }
+    .msg-code {
+      font-size: 1.2rem;
+      background: rgb(210, 210, 210);
+
     }
     }
     }

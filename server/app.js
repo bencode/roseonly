@@ -51,12 +51,18 @@ const product = require('./product.js');
 app.get('/index',cors(issue2options), product.main);
 app.get('/detail/pid/:pid/cid/:cid',cors(issue2options),product.detail);
 app.post('/login',cors(issue2options),user.login);
-app.post('/register',cors(),user.register);
+app.post('/register',cors(issue2options),user.register);
+app.get('/register/captcha/:id',cors(issue2options),user.captcha);
+app.post('/register/msgcode',cors(issue2options),user.msgcode);
+
+
+
 app.post('/add_to_cart',cors(issue2options),product.addCart);
 app.get('/cart',cors(issue2options), product.cart);
 app.post('/cart/count',cors(issue2options),product.count);
 app.post('/cart/delete',cors(issue2options),product.delete);
 app.get('/index/cartItems',cors(issue2options),product.cartItems);
+
 
 
 

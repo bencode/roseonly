@@ -2,8 +2,9 @@
  * Created by yupeiying on 6/23/17.
  */
 const pool = require('./pool');
+const ccap = require('ccap')(); //生成验证码
 module.exports ={
-  login: (req,res)=>{
+  login: (req,res) => {
     //console.log(req.body.pwd);
     var acct = req.body.account;
     var pwd = req.body.pwd;
@@ -33,24 +34,22 @@ module.exports ={
       })
     //})
   },
-  register: (req,res)=>{
-    console.log(req.body);
-    var acct = req.body.account;
-    var pwd = req.body.pwd;
-    var ctry = req.body.country;
-
-    pool.getConnection((err,conn)=>{
+  register: (req,res) => {
+    const acct = req.body.account;
+    const pwd = req.body.pwd;
+    const ctry = req.body.country;
+    pool.getConnection((err,conn) => {
       "use strict";
-      conn.query('INSERT INTO user VALUES (null,?,?,?,?,now())', ['',acct,pwd,ctry], (err,result)=>{
+      conn.query('INSERT INTO user VALUES (null,?,?,?,?,now())', ['',acct,pwd,ctry], (err,result) => {
         console.log(result);
-        if(result.affectedRows>=1){
-          var output = {
+        if(result.affectedRows >= 1){
+          const output = {
             code: 1,
             msg:'注册成功',
             uid: result.uid
           }
         }else{
-          var output = {
+          const output = {
             code: 2,
             msg:'注册失败，请重新注册'
           }
@@ -59,6 +58,18 @@ module.exports ={
         conn.release;
       });
     })
-  }
+  },
+  captcha: (req,res) => {
+    //if(req.url == '/favicon.ico')return response.end('');//Intercept request favicon.ico
+    let ary = ccap.get();
+    //let txt = ary[0];
+    let buf = ary[1];
+    res.end(buf);
+  },
+  msgcode: (req,res) => {
+      let ary = ccap.get();
+      let txt = ary[0];
+      res.end(txt);
+    },
 }
 

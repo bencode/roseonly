@@ -74,7 +74,6 @@ export default {
   computed : {
      personalCenter () {
        const uid = sessionStorage.uid;
-       console.log(uid);
        if(uid){
          return '/personal_center'
        }else{
