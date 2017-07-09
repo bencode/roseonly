@@ -385,7 +385,7 @@ const init_href = location.href;
         this.showNav = false;
       }
       //如果购物车有产品，购物袋加红点显示
-      const url = 'http://localhost:8060/index/cartItems';
+      const url = '/index/cartItems';
       this.$http.get(url).then(res => {
         if (res.body.data == true) {
           this.cartBgp = '-220px 0';
@@ -471,7 +471,7 @@ __WEBPACK_IMPORTED_MODULE_2__bus_js__["a" /* default */].$on('selectedItem', fun
 //  let translateX;
 
 function postData(count, i) {
-  const url = 'http://localhost:8060/cart/count';
+  const url = '/cart/count';
   this.items[i].count = count;
   const cartItems = JSON.stringify(this.items);
   const data = { cartItems };
@@ -507,7 +507,7 @@ function postData(count, i) {
     //正在加载中,数据未更新
     this.loading = true;
     this.update = false;
-    const url = 'http://localhost:8060/cart';
+    const url = '/cart';
     this.$http.get(url, { emulateJSON: true }).then(res => {
       //加载完成，数据已更新
       this.loading = false;
@@ -618,7 +618,7 @@ function postData(count, i) {
     },
     deleteItem(i) {
       this.items.splice(i, 1);
-      const url = 'http://localhost:8060/cart/delete';
+      const url = '/cart/delete';
       const cartItems = JSON.stringify(this.items);
       const data = { cartItems };
       this.$http.post(url, data, { emulateJSON: true }).then(res => {
@@ -792,7 +792,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       if (this.colors.cid) {
         c_id = this.colors.cid;
       };
-      var url = `http://localhost:8060/detail/pid/${p_id}/cid/${c_id}`;
+      var url = `/detail/pid/${p_id}/cid/${c_id}`;
       this.$http.get(url).then(function (data) {
         var detailProducts = data.body[0][0];
         var cimg = detailProducts.c_color_img;
@@ -836,7 +836,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       __WEBPACK_IMPORTED_MODULE_4__bus_js__["a" /* default */].$emit('addCount', count); //点击一次向购物车增加1
 
       //点击'加入购物车'，使用Ajax向服务端发送当前产品数据
-      const url = 'http://localhost:8060/add_to_cart';
+      const url = '/add_to_cart';
       const pid = this.$route.params.pid;
       const cid = this.$route.params.cid;
       const data = { pid: pid, cid: cid, cimg: cimg, count: 1 };
@@ -1036,7 +1036,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return;
       };
       //通过ajax提交至后台查询
-      var url = 'http://localhost:8060/login';
+      var url = '/login';
       var data = { account: this.account, pwd: this.pwd, country: this.country };
       // POST /someUrl
       this.$http.post(url, data, { emulateJSON: true }).then(res => {
@@ -1289,7 +1289,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       var c_id = this.$route.params.cid;
       console.log(p_id, c_id);
 
-      var url = `http://localhost:8060/detail/pid/${p_id}/cid/${c_id}`;
+      var url = `/detail/pid/${p_id}/cid/${c_id}`;
       this.$http.get(url).then(function (data) {
         //console.dir(data.body[1]);
         this.recomends = data.body[1];
@@ -1359,7 +1359,7 @@ const during = 60; //信息码有效时间60s
       imgCode: '',
       msgCode: '',
       pwd: '',
-      captcha: 'http://localhost:8060/register/captcha/1', //'获取图片码',
+      captcha: '/register/captcha/1', //'获取图片码',
       seconds: ''
     };
   },
@@ -1385,7 +1385,7 @@ const during = 60; //信息码有效时间60s
         return;
       };
       //通过ajax提交至后台查询
-      const url = 'http://localhost:8060/register';
+      const url = '/register';
       const time = during - this.seconds; //获取信息码到发送信息码的时间
       const data = { country: this.country, account: this.account, pwd: this.pwd, imgCode: this.imgCode, msgCode: this.msgCode, time: time };
       this.$http.post(url, data, { emulateJSON: true }).then(res => {
@@ -1417,7 +1417,7 @@ const during = 60; //信息码有效时间60s
     },
     getCaptcha() {
       let id = getRndInteger(100000, 999999);
-      const url = `http://localhost:8060/register/captcha/${id}`;
+      const url = `/register/captcha/${id}`;
       this.$http.get(url).then(res => {
         this.captcha = url;
       });
@@ -1427,7 +1427,7 @@ const during = 60; //信息码有效时间60s
         return;
       }
       //获取手机验证码
-      const url = 'http://localhost:8060/register/msgcode';
+      const url = '/register/msgcode';
       const data = { tel: this.account };
       this.$http.post(url, data, { emulateJSON: true }).then(res => {
         let correctMsgCode = res.body;
@@ -1668,7 +1668,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   // 组件创建完后获取数据，
   created: function () {
-    var url = "http://localhost:8060/index";
+    var url = "/index";
     this.$http.get(url).then(function (data) {
       this.graProducts = data.body.slice(0, 5);
       this.loveProducts = data.body.slice(5, 10);
@@ -3216,4 +3216,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ })
 ],[28]);
-//# sourceMappingURL=app.e18a5d6acfd7dfb236d2.js.map
+//# sourceMappingURL=app.10b2c99892da568be6e4.js.map
