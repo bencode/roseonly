@@ -4,21 +4,21 @@
     <form method="post">
       <ul class="register-info">
         <li>
-          国家和地区：<input type="select" name="country" v-model="country"  :value="country">
+          国家和地区：<input type="select" name="country" v-model="country"  :value="country" required>
         </li>
         <li>
-          <span class="ctr-code">+86</span><input type="text" name="account" placeholder="请输入手机号码/邮箱" v-model="account" :value="account">
+          <span class="ctr-code">+86</span><input type="text" name="account" placeholder="请输入手机号码/邮箱" v-model="account" :value="account" required>
         </li>
         <li>
-          图片码：<input type="select" name="imgCode" placeholder="请输入图片码" v-model="imgCode" :value="imgCode">
+          图片码：<input type="select" name="imgCode" placeholder="请输入图片码" v-model.trim="imgCode" :value="imgCode" required>
           <img :src="captcha" alt="图片码" class="img-code" :title="correctImgCode" @click="getCaptcha">
         </li>
         <li>
-          短信码：<input type="select" name="msgCode"  placeholder="请输入验证码"  v-model="msgCode" :value="msgCode">
+          短信码：<input type="select" name="msgCode"  placeholder="请输入验证码"  v-model.trim="msgCode" :value="msgCode" required>
           <span class="msg-code" @click="getMsgCode">{{time}}</span>
         </li>
         <li>
-          密码：<input type="password" name="pwd" placeholder="请输入6-20位数字/字母密码" v-model="pwd" :value="pwd">
+          密码：<input type="password" name="pwd" placeholder="请输入6-20位数字/字母密码" v-model="pwd" :value="pwd" required>
         </li>
       </ul>
       <p class="recall-code">没有收到短信验证码？请使用<a href="">语音验证码</a></p>
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+  const during = 60;//信息码有效时间
   export default {
     name: 'register-box',
     data () {
@@ -59,12 +60,31 @@
     },
     methods: {
       postData () {
-        if(testAccount(this.account) === false || this.imgCode != this.correctImgCode || this.msgCode != this.correctMsgCode || testPwd(this.pwd) === false ){
+        if(testAccount(this.account) === false){
+          alert('账号格式不正确，请重新输入');
           return
         };
+        if(this.imgCode == '') {
+          alert('图片码不能为空');
+          return;
+        };
+//        if(this.imgCode != this.correctImgCode) {
+//          alert('图片码输入不正确，请重新输入');
+//          return;
+//        };
+        if(this.msgCode == '') {
+          alert('短信码不能为空');
+          return;
+        };
+        if(testPwd(this.pwd) === false){
+          alert('密码格式不正确，请重新输入');
+          return
+        };
+
         //通过ajax提交至后台查询
         const url = 'http://localhost:8060/register';
-        const data = {country: this.country, account: this.account, pwd: this.pwd,};
+        const time = during - this.seconds; //获取信息码到发送信息码的时间
+        const data = {country: this.country, account: this.account, pwd: this.pwd, imgCode: this.imgCode, msgCode: this.msgCode, time: time};
         this.$http.post(url, data, {emulateJSON: true}).then(res => {//请求成功时的回调
           //console.log(res.body);//response.body服务器发送的结果对象
           if(res.body.code === 1){
@@ -73,6 +93,17 @@
               window.location = '/order'
             },3000)
           }else if(res.body.code === 2){
+            alert(res.body.msg);
+          }else if(res.body.code === 3){
+            alert(res.body.msg);
+            this.getCaptcha();
+          }else if(res.body.code === 4){
+            this.seconds ='';
+            alert(res.body.msg);
+          }else if(res.body.code === 5) {
+            alert(res.body.msg);
+          }else if(res.body.code === 6) {
+            this.seconds ='';
             alert(res.body.msg);
           }
         }, res => {//请求失败时的回调
@@ -98,15 +129,24 @@
           this.correctMsgCode = res.body;
           console.log('短信码 ： '+this.correctMsgCode);
           //倒计时60s
-          this.seconds = Number(60);
-          const _this = this;
-          let timer = setInterval(function () {
-            _this.seconds --;
-            if(_this.seconds < 0){
-              _this.seconds = '';
+          this.seconds = Number(during);
+//          const _this = this;
+//          let timer = setInterval(function () {
+//            _this.seconds --;
+//            if(_this.seconds < 0){
+//              _this.seconds = '';
+//              _this.correctMsgCode ='';
+//              clearInterval(timer);
+//            }
+//          },1000)
+          //也可用箭头函数解决this的指向问题，箭头函数this指向引用的对象
+          let timer = setInterval( () => {
+            this.seconds --;
+            if(this.seconds < 0){
+              this.seconds = '';
+              this.correctMsgCode ='';
               clearInterval(timer);
             }
-            console.log(_this.seconds);
           },1000)
         });
 
