@@ -135,7 +135,7 @@ export default {
   // 组件创建完后获取数据，
   created:
     function() {
-      var url= "http://localhost:8060/index";
+      var url= "/index";
       this.$http.get(url).then(function(data){
         this.graProducts = data.body.slice(0,5);
         this.loveProducts = data.body.slice(5,10)

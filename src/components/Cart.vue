@@ -58,7 +58,7 @@
 //  let translateX;
 
   function postData(count,i) {
-    const url = 'http://localhost:8060/cart/count';
+    const url = '/cart/count';
     this.items[i].count = count;
     const cartItems = JSON.stringify(this.items);
     const data ={cartItems};
@@ -97,7 +97,7 @@
       //正在加载中,数据未更新
       this.loading = true;
       this.update = false;
-      const url = 'http://localhost:8060/cart';
+      const url = '/cart';
       this.$http.get(url,{emulateJSON: true}).then(res => {
         //加载完成，数据已更新
         this.loading = false;
@@ -204,7 +204,7 @@
       },
       deleteItem (i) {
         this.items.splice(i,1);
-        const url = 'http://localhost:8060/cart/delete';
+        const url = '/cart/delete';
         const cartItems = JSON.stringify(this.items);
         const data ={cartItems};
         this.$http.post(url,data,{emulateJSON: true}).then(res => {

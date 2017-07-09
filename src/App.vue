@@ -157,7 +157,7 @@ export default {
         this.showNav = false;
       }
       //如果购物车有产品，购物袋加红点显示
-      const url = 'http://localhost:8060/index/cartItems';
+      const url = '/index/cartItems';
       this.$http.get(url).then(res=>{
         if(res.body.data == true){
           this.cartBgp = '-220px 0';

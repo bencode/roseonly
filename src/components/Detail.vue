@@ -148,7 +148,7 @@ export default {
       if(this.colors.cid){
         c_id = this.colors.cid
       };
-      var url= `http://localhost:8060/detail/pid/${p_id}/cid/${c_id}`;
+      var url= `/detail/pid/${p_id}/cid/${c_id}`;
       this.$http.get(url).then(function(data){
         var detailProducts = data.body[0][0];
         var cimg = detailProducts.c_color_img;
@@ -192,7 +192,7 @@ export default {
       bus.$emit('addCount', count)//点击一次向购物车增加1
 
       //点击'加入购物车'，使用Ajax向服务端发送当前产品数据
-      const url = 'http://localhost:8060/add_to_cart'
+      const url = '/add_to_cart'
       const pid = this.$route.params.pid;
       const cid = this.$route.params.cid;
       const data = {pid: pid, cid: cid, cimg: cimg, count: 1};

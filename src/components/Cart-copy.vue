@@ -41,7 +41,7 @@
     return itemsList = items;
   });
   function postData(count,i) {
-    const url = 'http://localhost:8060/cart/count';
+    const url = '/cart/count';
     this.items[i].count = count;
     const cartItems = JSON.stringify(this.items);
     const data ={cartItems};
@@ -73,7 +73,7 @@
     }
     ,
     created: function () {
-      const url = 'http://localhost:8060/cart';
+      const url = '/cart';
       this.$http.get(url,{emulateJSON: true}).then(res => {
         this.items = res.body;
       },res => {});

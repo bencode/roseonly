@@ -50,7 +50,7 @@
         imgCode: '',
         msgCode: '',
         pwd: '',
-        captcha:'http://localhost:8060/register/captcha/1',//'获取图片码',
+        captcha:'/register/captcha/1',//'获取图片码',
         seconds: '',
       }
     },
@@ -76,7 +76,7 @@
           return
         };
         //通过ajax提交至后台查询
-        const url = 'http://localhost:8060/register';
+        const url = '/register';
         const time = during - this.seconds; //获取信息码到发送信息码的时间
         const data = {country: this.country, account: this.account, pwd: this.pwd, imgCode: this.imgCode, msgCode: this.msgCode, time: time};
         this.$http.post(url, data, {emulateJSON: true}).then(res => {//请求成功时的回调
@@ -101,7 +101,7 @@
       },
       getCaptcha () {
         let id = getRndInteger(100000, 999999);
-        const url = `http://localhost:8060/register/captcha/${id}`;
+        const url = `/register/captcha/${id}`;
         this.$http.get(url).then(res => {
           this.captcha = url;
         });
@@ -114,7 +114,7 @@
           return
         }
         //获取手机验证码
-        const url = 'http://localhost:8060/register/msgcode';
+        const url = '/register/msgcode';
         const data = {tel: this.account};
         this.$http.post(url, data, {emulateJSON: true}).then(res => {
           let correctMsgCode = res.body;

@@ -43,7 +43,7 @@ export default {
       var c_id = this.$route.params.cid;
       console.log(p_id,c_id);
 
-      var url= `http://localhost:8060/detail/pid/${p_id}/cid/${c_id}`;
+      var url= `/detail/pid/${p_id}/cid/${c_id}`;
       this.$http.get(url).then(function(data) {
         //console.dir(data.body[1]);
         this.recomends = data.body[1];

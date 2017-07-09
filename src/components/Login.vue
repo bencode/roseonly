@@ -55,7 +55,7 @@
             return
         };
         //通过ajax提交至后台查询
-        var url = 'http://localhost:8060/login';
+        var url = '/login';
         var data = {account: this.account, pwd: this.pwd, country: this.country};
         this.$http.post(url, data, {emulateJSON: true}).then(res => {//请求成功时的回调
           //alert('服务器请求成功');
