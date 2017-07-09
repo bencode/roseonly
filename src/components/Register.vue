@@ -35,7 +35,7 @@
 </template>
 
 <script>
-  const during = 60;//信息码有效时间
+  const during = 60;//信息码有效时间60s
   export default {
     name: 'register-box',
     data () {
@@ -68,10 +68,6 @@
           alert('图片码不能为空');
           return;
         };
-//        if(this.imgCode != this.correctImgCode) {
-//          alert('图片码输入不正确，请重新输入');
-//          return;
-//        };
         if(this.msgCode == '') {
           alert('短信码不能为空');
           return;
@@ -80,7 +76,6 @@
           alert('密码格式不正确，请重新输入');
           return
         };
-
         //通过ajax提交至后台查询
         const url = 'http://localhost:8060/register';
         const time = during - this.seconds; //获取信息码到发送信息码的时间

@@ -107,14 +107,12 @@ module.exports ={
     })
   },
   captcha: (req,res) => {
-    //if(req.url == '/favicon.ico')return response.end('');//Intercept request favicon.ico
     let ary = ccap.get();
     let txt = ary[0];
     let buf = ary[1];
     req.session.imgCode = txt;
     console.log(txt);
     res.end(buf);
-
   },
   msgcode: (req,res) => {
       let ary = ccap.get();
