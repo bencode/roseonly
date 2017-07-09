@@ -1038,16 +1038,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       //通过ajax提交至后台查询
       var url = '/login';
       var data = { account: this.account, pwd: this.pwd, country: this.country };
-      // POST /someUrl
       this.$http.post(url, data, { emulateJSON: true }).then(res => {
         //请求成功时的回调
         //alert('服务器请求成功');
-        console.log(res.body); //response.body服务器发送的结果对象
+        //console.log(res.body);//response.body服务器发送的结果对象
         //将uid,uname保存到sessionStorage
         sessionStorage['uid'] = res.body.uid;
         sessionStorage['uname'] = res.body.uname;
-
-        if (res.body.code === 1) {
+        if (res.body.code === 7) {
+          alert(res.body.msg);
+          this.pwd = '';
+          let input = document.querySelector("input[name='pwd']");
+          input.focus();
+        } else if (res.body.code === 1) {
           setTimeout(function () {
             window.location = '/order';
           }, 3000);
@@ -1398,13 +1401,8 @@ const during = 60; //信息码有效时间60s
           }, 3000);
         } else if (res.body.code === 2) {
           alert(res.body.msg);
-        } else if (res.body.code === 3) {
-          alert(res.body.msg);
-          this.getCaptcha();
         } else if (res.body.code === 4) {
           this.seconds = '';
-          alert(res.body.msg);
-        } else if (res.body.code === 5) {
           alert(res.body.msg);
         } else if (res.body.code === 6) {
           this.seconds = '';
@@ -1423,6 +1421,9 @@ const during = 60; //信息码有效时间60s
       });
     },
     getMsgCode() {
+      if (testAccount(this.account) === false) {
+        return;
+      };
       if (this.seconds) {
         return;
       }
@@ -1452,7 +1453,35 @@ const during = 60; //信息码有效时间60s
           }
         }, 1000);
       });
+    },
+    checkAccount() {
+      const url = 'http://localhost:8060/register/check_account';
+      const data = { account: this.account };
+      this.$http.post(url, data, { emulateJSON: true }).then(res => {
+        if (res.body.code === 5) {
+          alert(res.body.msg);
+          let input = document.querySelector("input[name='account']");
+          input.focus();
+          this.account = '';
+        }
+      });
+    },
+    checkCaptcha() {
+      const url = 'http://localhost:8060/register/check_captcha';
+      const data = { imgCode: this.imgCode };
+      this.$http.post(url, data, { emulateJSON: true }).then(res => {
+        if (res.body.code === 3) {
+          if (this.imgCode) {
+            alert(res.body.msg);
+          }
+          let input = document.querySelector("input[name='imgCode']");
+          input.focus();
+          this.imgCode = '';
+          this.getCaptcha();
+        }
+      });
     }
+
   }
 });
 
@@ -1480,7 +1509,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   watch: {
     'userData': function () {
-      console.log(this.userData);
       if (this.userData) {
         this.btnBg = "green";
         this.isButtonDisabled = null;
@@ -2446,11 +2474,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('li', [_vm._v("\n        国家和地区："), _c('input', {
     directives: [{
       name: "model",
-      rawName: "v-model.lazy.trim",
+      rawName: "v-model.trim",
       value: (_vm.country),
       expression: "country",
       modifiers: {
-        "lazy": true,
         "trim": true
       }
     }],
@@ -2464,7 +2491,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": (_vm.country)
     },
     on: {
-      "change": function($event) {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
         _vm.country = $event.target.value.trim()
       },
       "blur": function($event) {
@@ -2476,11 +2504,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_vm._v("+86")]), _c('input', {
     directives: [{
       name: "model",
-      rawName: "v-model.lazy.trim",
+      rawName: "v-model.trim",
       value: (_vm.account),
       expression: "account",
       modifiers: {
-        "lazy": true,
         "trim": true
       }
     }],
@@ -2495,7 +2522,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": (_vm.account)
     },
     on: {
-      "change": function($event) {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
         _vm.account = $event.target.value.trim()
       },
       "blur": function($event) {
@@ -2505,11 +2533,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   })]), _vm._v(" "), _c('li', [_vm._v("\n        密码："), _c('input', {
     directives: [{
       name: "model",
-      rawName: "v-model.lazy.trim",
+      rawName: "v-model.trim",
       value: (_vm.pwd),
       expression: "pwd",
       modifiers: {
-        "lazy": true,
         "trim": true
       }
     }],
@@ -2524,7 +2551,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": (_vm.pwd)
     },
     on: {
-      "change": function($event) {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
         _vm.pwd = $event.target.value.trim()
       },
       "blur": function($event) {
@@ -3041,9 +3069,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_vm._v("+86")]), _c('input', {
     directives: [{
       name: "model",
-      rawName: "v-model",
+      rawName: "v-model.trim",
       value: (_vm.account),
-      expression: "account"
+      expression: "account",
+      modifiers: {
+        "trim": true
+      }
     }],
     attrs: {
       "type": "text",
@@ -3056,9 +3087,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": (_vm.account)
     },
     on: {
-      "input": function($event) {
+      "input": [function($event) {
         if ($event.target.composing) { return; }
-        _vm.account = $event.target.value
+        _vm.account = $event.target.value.trim()
+      }, _vm.checkAccount],
+      "blur": function($event) {
+        _vm.$forceUpdate()
       }
     }
   })]), _vm._v(" "), _c('li', [_vm._v("\n        图片码："), _c('input', {
@@ -3072,7 +3106,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }],
     attrs: {
-      "type": "select",
+      "type": "text",
       "name": "imgCode",
       "placeholder": "请输入图片码",
       "required": ""
@@ -3082,12 +3116,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": (_vm.imgCode)
     },
     on: {
+      "blur": [_vm.checkCaptcha, function($event) {
+        _vm.$forceUpdate()
+      }],
       "input": function($event) {
         if ($event.target.composing) { return; }
         _vm.imgCode = $event.target.value.trim()
-      },
-      "blur": function($event) {
-        _vm.$forceUpdate()
       }
     }
   }), _vm._v(" "), _c('img', {
@@ -3111,7 +3145,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }],
     attrs: {
-      "type": "select",
+      "type": "text",
       "name": "msgCode",
       "placeholder": "请输入验证码",
       "required": ""
@@ -3216,4 +3250,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ })
 ],[28]);
-//# sourceMappingURL=app.10b2c99892da568be6e4.js.map
+//# sourceMappingURL=app.7e8839a9c3037b5abd3b.js.map
