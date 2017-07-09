@@ -18,7 +18,7 @@ http.createServer(app).listen(8060);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 //获取静态资源文件
-app.use(express.static(pathUtil.join(__dirname, '../static')));
+app.use(express.static(pathUtil.join(__dirname, '../dist')));
 app.use(cookieParser());
 app.use(session({
     secret: 'keyboard cat',
