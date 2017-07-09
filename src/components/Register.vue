@@ -11,7 +11,7 @@
         </li>
         <li>
           图片码：<input type="select" name="imgCode" placeholder="请输入图片码" v-model.trim="imgCode" :value="imgCode" required>
-          <img :src="captcha" alt="图片码" class="img-code" :title="correctImgCode" @click="getCaptcha">
+          <img :src="captcha" alt="图片码" class="img-code" title="图片验证码" @click="getCaptcha">
         </li>
         <li>
           短信码：<input type="select" name="msgCode"  placeholder="请输入验证码"  v-model.trim="msgCode" :value="msgCode" required>
@@ -22,7 +22,11 @@
         </li>
       </ul>
       <p class="recall-code">没有收到短信验证码？请使用<a href="">语音验证码</a></p>
-      <button type="button" @click="postData">注册</button>
+      <div @click="postData">
+        <submit-btn :userData="userData">
+          注 册
+        </submit-btn>
+      </div>
     </form>
     <p class="to-register">
       <router-link to="/register">已有账号登录</router-link>
@@ -35,6 +39,7 @@
 </template>
 
 <script>
+  import submitBtn from './Submit-btn.vue'
   const during = 60;//信息码有效时间60s
   export default {
     name: 'register-box',
@@ -45,32 +50,26 @@
         imgCode: '',
         msgCode: '',
         pwd: '',
-        captcha:'http://localhost:8060/register/captcha/1',
-        correctMsgCode: '',
-          //'获取验证码',
-        correctImgCode: '',
+        captcha:'http://localhost:8060/register/captcha/1',//'获取图片码',
         seconds: '',
-      //'获取图片码',
       }
     },
     computed: {
       time: function(){
         return this.seconds || '获取验证码';
-      }
+      },
+      userData () {
+        return this.country && this.account && this.pwd && this.imgCode && this.msgCode;
+      },
+    },
+    components: {
+      submitBtn
     },
     methods: {
       postData () {
         if(testAccount(this.account) === false){
           alert('账号格式不正确，请重新输入');
           return
-        };
-        if(this.imgCode == '') {
-          alert('图片码不能为空');
-          return;
-        };
-        if(this.msgCode == '') {
-          alert('短信码不能为空');
-          return;
         };
         if(testPwd(this.pwd) === false){
           alert('密码格式不正确，请重新输入');
@@ -104,7 +103,6 @@
         }, res => {//请求失败时的回调
           alert('服务器请求失败，请重新注册')
         });
-
       },
       getCaptcha () {
         let id = getRndInteger(100000, 999999);
@@ -121,8 +119,8 @@
         const url = 'http://localhost:8060/register/msgcode';
         const data = {tel: this.account};
         this.$http.post(url, data, {emulateJSON: true}).then(res => {
-          this.correctMsgCode = res.body;
-          console.log('短信码 ： '+this.correctMsgCode);
+          let correctMsgCode = res.body;
+          console.log('短信码 ： '+correctMsgCode);
           //倒计时60s
           this.seconds = Number(during);
 //          const _this = this;
@@ -130,7 +128,7 @@
 //            _this.seconds --;
 //            if(_this.seconds < 0){
 //              _this.seconds = '';
-//              _this.correctMsgCode ='';
+//              _correctMsgCode ='';
 //              clearInterval(timer);
 //            }
 //          },1000)
@@ -139,7 +137,6 @@
             this.seconds --;
             if(this.seconds < 0){
               this.seconds = '';
-              this.correctMsgCode ='';
               clearInterval(timer);
             }
           },1000)

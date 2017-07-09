@@ -14,7 +14,10 @@
           </li>
         </ul>
         <p class="recall-pwd"><a href="">找回密码</a></p>
-        <button type="button" @click="postData" :style="{background: btnBg}" :disabled="isButtonDisabled" @touchstart="changeBtnColor" @touchend="resumeBtnColor">登录</button>
+        <!--<button type="button" @click="postData" :style="{background: btnBg}" :disabled="isButtonDisabled" @touchstart="changeBtnColor" @touchend="resumeBtnColor">登录</button>-->
+        <div @click="postData">
+         <submit-btn :userData="userData"/>
+        </div>
       </form>
       <p class="to-register">
         <router-link to="/register">快速注册</router-link>
@@ -27,8 +30,7 @@
 </template>
 
 <script>
-
-
+  import submitBtn from './Submit-btn.vue'
   export default {
     name: 'app',
     data () {
@@ -36,8 +38,6 @@
         country: '中国',
         account: '',
         pwd:'',
-        btnBg: "rgb(225, 225, 225)",
-        isButtonDisabled: 'disabled',
       }
     },
     computed: {
@@ -45,21 +45,9 @@
         return this.country && this.account && this.pwd;
       },
     },
-    watch: {
-      'userData' : function () {
-        console.log(this.userData);
-        if (this.userData) {
-          this.btnBg = "green";
-          this.isButtonDisabled = null;
-        } else {
-          this.btnBg = "rgb(225, 225, 225)"
-        }
-      }
+    components: {
+     submitBtn
     },
-    // 组件创建完后获取数据，
-//    created () {
-//      this.postData()
-//    },
     methods: {
       postData () {
       //验证账号和密码格式
@@ -87,23 +75,8 @@
         }, res => {//请求失败时的回调
           alert('服务器请求失败，请重新登录')
         });
-
       },
-      changeBtnColor () {
-        if(this.userData){
-          this.btnBg ='#015801';
-        }
-      },
-      resumeBtnColor () {
-        if(this.userData){
-          this.btnBg ='green';
-        }
-
-      }
-
     },
-
-
   }
 </script>
 
