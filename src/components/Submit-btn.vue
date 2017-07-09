@@ -16,7 +16,6 @@
     },
     watch: {
       'userData' : function () {
-        console.log(this.userData);
         if (this.userData) {
           this.btnBg = "green";
           this.isButtonDisabled = null;
@@ -44,5 +43,19 @@
 </script>
 
 <style scoped lang='less'>
+  button {
+    height: 5rem;
+    text-align: center;
+    width: 100%;
+    background: rgb(225, 225, 225);
+    color:#fff;
+    font-size: 1.8rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 3px;
+    outline: none;
+  }
+
+
 
 </style>

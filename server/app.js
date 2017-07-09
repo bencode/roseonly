@@ -54,6 +54,9 @@ app.post('/login',cors(issue2options),user.login);
 app.post('/register',cors(issue2options),user.register);
 app.get('/register/captcha/:id',cors(issue2options),user.captcha);
 app.post('/register/msgcode',cors(issue2options),user.msgcode);
+app.post('/register/check_account',cors(issue2options),user.checkAccount);
+app.post('/register/check_captcha',cors(issue2options),user.checkCaptcha);
+
 
 
 

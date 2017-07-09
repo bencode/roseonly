@@ -4,13 +4,13 @@
       <form method="post">
         <ul class="login-info">
           <li>
-            国家和地区：<input type="select" name="country" value="country" ref="country" v-model.lazy.trim="country">
+            国家和地区：<input type="select" name="country" value="country" ref="country" v-model.trim="country">
           </li>
           <li>
-            <span class="ctr-code">+86</span><input type="text" name="account" placeholder="请输入手机号码/邮箱" ref="account" v-model.lazy.trim="account" :value="account">
+            <span class="ctr-code">+86</span><input type="text" name="account" placeholder="请输入手机号码/邮箱" ref="account" v-model.trim="account" :value="account">
           </li>
           <li>
-            密码：<input type="password" name="pwd" placeholder="请输入密码" ref="pwd" v-model.lazy.trim="pwd" :value="pwd">
+            密码：<input type="password" name="pwd" placeholder="请输入密码" ref="pwd" v-model.trim="pwd" :value="pwd">
           </li>
         </ul>
         <p class="recall-pwd"><a href="">找回密码</a></p>
@@ -57,15 +57,18 @@
         //通过ajax提交至后台查询
         var url = 'http://localhost:8060/login';
         var data = {account: this.account, pwd: this.pwd, country: this.country};
-        // POST /someUrl
         this.$http.post(url, data, {emulateJSON: true}).then(res => {//请求成功时的回调
           //alert('服务器请求成功');
-          console.log(res.body);//response.body服务器发送的结果对象
+          //console.log(res.body);//response.body服务器发送的结果对象
           //将uid,uname保存到sessionStorage
           sessionStorage['uid'] = res.body.uid;
           sessionStorage['uname'] = res.body.uname;
-
-          if(res.body.code === 1){
+          if(res.body.code === 7){
+            alert(res.body.msg);
+            this.pwd = '' ;
+            let input = document.querySelector("input[name='pwd']");
+            input.focus();
+          }else if(res.body.code === 1){
             setTimeout(function(){
               window.location = '/order'
             },3000)
@@ -113,19 +116,6 @@
 
       }
     }
-  button {
-    height: 5rem;
-    text-align: center;
-    width: 100%;
-    background: rgb(225, 225, 225);
-    color:#fff;
-    font-size: 1.8rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 3px;
-    outline: none;
-
-  }
   .recall-pwd {
     text-align: right;
     a{
